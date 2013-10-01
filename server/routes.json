@@ -1,0 +1,29 @@
+{
+	"get /agencies/:agency_slug": { "action":"agencies:item" },
+	"get /agencies": { "action":"agencies:index" },
+
+	"get /route_types/:route_type_id": { "action":"route_types:item" },
+	"get /route_types": { "action":"route_types:index" },
+
+	"get /routes/:route_id": { "action":"routes:show" },
+	"get /routes": { "action":"routes:index" },
+	"get /route_types/:route_type/routes/:route_id": { "action":"routes:show" },
+	"get /route_types/:route_type/routes": { "action":"routes:index" },
+
+	"get /directions/:direction_id": { "action":"directions:item" },
+	"get /directions": { "action":"directions:index" },
+	"get /routes/:route_id/directions/:direction_id": { "action":"directions:item" },
+	"get /routes/:route_id/directions": { "action":"directions:index" },
+
+	"get /stops/:id": { "action":"stops:item" },
+	"get /stops": { "action":"stops:index" },
+
+	"get /simplified_stops/:id": { "action":"simplified_stops:item" },
+	"get /simplified_stops": { "action":"simplified_stops:index" },
+	"get /routes/:route_id/directions/:direction_id/stops/:stop_id": { "action":"simplified_stops:item" },
+	"get /routes/:route_id/directions/:direction_id/stops": { "action":"simplified_stops:index" },
+
+	"get /routes/:route_id/directions/:direction_id/stops/:stop_id/trips": { "action":"display_trips:trips" },
+
+	"get /": { "action":"index" }
+}
