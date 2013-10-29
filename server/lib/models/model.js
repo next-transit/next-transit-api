@@ -1,5 +1,4 @@
-var utils = require('./utils'),
-	db = require('../db');
+var db = require('../db');
 
 function Model(table, public_fields) {
 	this.CLASS = 'Model';
@@ -280,6 +279,16 @@ Model.prototype.query = function(agency_id) {
 					callback(count);
 				}, true);
 		}
+	};
+
+	query.sql = function(callback) {
+		var sql = generate_sql(model.table, q.select, q.joins, q.where, q.params, q.group_by, q.orders, q.limit, q.offset, q.alias);
+		if(typeof callback === 'function') {
+			callback(sql, q.params);
+		} else {
+			console.log(sql, q.params);
+		}
+		return query;
 	};
 
 	return query;

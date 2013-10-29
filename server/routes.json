@@ -5,6 +5,8 @@
 	"get /route_types/:route_type_id": { "action":"route_types:item" },
 	"get /route_types": { "action":"route_types:index" },
 
+	"get /routes/search/:term": { "action":"search" },
+
 	"get /routes/:route_id": { "action":"routes:show" },
 	"get /routes": { "action":"routes:index" },
 	"get /route_types/:route_type/routes/:route_id": { "action":"routes:show" },
@@ -24,6 +26,11 @@
 	"get /routes/:route_id/directions/:direction_id/stops": { "action":"simplified_stops:index" },
 
 	"get /routes/:route_id/directions/:direction_id/stops/:stop_id/trips": { "action":"display_trips:trips" },
+
+	"get /shapes": { "action":"shapes:bbox" },
+	"get /routes/:route_id/shapes": { "action":"shapes" },
+
+	"get /stats": { "action":"stats" },
 
 	"get /": { "action":"index" }
 }

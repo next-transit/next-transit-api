@@ -1,23 +1,35 @@
 var promise = require('promise'),
-	ctrl = require('./controller').create('shapes'),
+	ctrl = require('./controller').create('shapes', true),
 	routes = require('../models/routes'),
-	shapes = require('../models/shapes');
+	simplified_shapes = require('../models/simplified_shapes');
 
 function get_simplified_shape_by_route_id(agency_id, route_id) {
 	return new promise(function(resolve, reject) {
-		shapes.where('agency_id = ? AND lower(route_id) = ?', [agency_id, route_id.toLowerCase()])
-			.orders('shape_pt_sequence')
-			.done(function(points) {
-				var simplified_shape = [];
-				points.forEach(function(point) {
-					simplified_shape.push([parseFloat(point.shape_pt_lat), parseFloat(point.shape_pt_lon)]);
-				});
-				
-				routes.query(agency_id)
-					.where('agency_id = ? AND (lower(route_id) = ? OR lower(route_short_name) = ?)', [agency_id, route_id.toLowerCase(), route_id.toLowerCase()])
-					.first(function(route) {
-						route.points = simplified_shape;
-						resolve(route);
+		routes.query(agency_id)
+			.where('agency_id = ? AND (lower(route_id) = ? OR lower(route_short_name) = ?)', [agency_id, route_id.toLowerCase(), route_id.toLowerCase()])
+			.first(function(route) {
+				simplified_shapes.where('agency_id = ? AND route_id = ?', [agency_id, route.route_id])
+					.orders('segment_id, id')
+					.done(function(points) {
+						var segments = {};
+
+						points.forEach(function(point) {
+							var segment_id = point.segment_id.toString();
+							if(!(segment_id in segments)) {
+								segments[segment_id] = [];
+							}
+							segments[segment_id].push([parseFloat(point.shape_pt_lat), parseFloat(point.shape_pt_lon)]);
+						});
+
+						var shapes = [];
+						for(segment_id in segments) {
+							if(segments.hasOwnProperty(segment_id)) {
+								shapes.push(segments[segment_id]);
+							}
+						}
+
+						route.shapes = shapes;
+						resolve({ shapes:shapes, route:routes.public(route) });
 					});
 			});
 	});
@@ -38,20 +50,28 @@ function get_shapes_for_routes(agency_id, route_results, callback) {
 		}
 	});
 
-	promise.all(promises).done(function(routes) {
+	promise.all(promises).done(function(results) {
+		var routes = results.map(function(result) {
+			result.route.shapes = result.shapes;
+			return result.route;
+		});
 		callback(routes);
 	});
 }
 
 ctrl.action('index', { json:true }, function(req, res, callback) {
-	if(req.route_id) {
-		var route_id = req.route_id.toLowerCase(), route = req.route;
+	if(req.params.route_id) {
+		var route_id = req.params.route_id.toLowerCase();
 
-		get_simplified_shape_by_route_id(req.agency.id, route_id).done(function(simplified_shape) {
-			callback(simplified_shape);
+		get_simplified_shape_by_route_id(req.agency.id, route_id).done(function(results) {
+			callback({
+				data: results.shapes,
+				count: results.shapes.length,
+				total_count: results.shapes.length
+			});
 		});
 	} else {
-		callback({ shapes:[] });
+		res.error('Could not find round.', 404);
 	}
 });
 
@@ -63,16 +83,22 @@ ctrl.action('bbox', { json:true }, function(req, res, callback) {
 			right = parseFloat(bbox[2]),
 			top = parseFloat(bbox[3]);
 
-		shapes.query()
+		simplified_shapes.query()
 			.select('distinct route_id')
 			.where('agency_id = ? AND shape_pt_lon > ? AND shape_pt_lon < ? AND shape_pt_lat > ? AND shape_pt_lat < ?', [req.agency.id, left, right, bottom, top])
-			.done(function(results) {
+			.limit(ctrl.limit)
+			.count(true)
+			.done(function(results, count) {
 				get_shapes_for_routes(req.agency.id, results, function(routes) {
-					callback({ routes:routes });
+					callback({
+						data: routes,
+						count: routes.count,
+						total_count: count
+					});
 				});
 			});
 	} else {
-		callback({ shapes:[] });
+		res.error('Bounding box is required.', 400);
 	}
 });
 

@@ -8,7 +8,7 @@ function get_route(req) {
 	return new promise(function(resolve, reject) {
 		var route_id = (req.params.route_id || '').toLowerCase();
 		routes
-			.where('agency_id = ? AND (lower(route_id) = ? OR lower(route_short_name) = ?)', [req.agency.id, req.params.route_id])
+			.where('agency_id = ? AND (lower(route_id) = ? OR lower(route_short_name) = ?)', [req.agency.id, route_id, route_id])
 			.error(reject)
 			.first(resolve);
 	});
@@ -30,7 +30,7 @@ ctrl.action('trips', function(req, res, success) {
 	get_route(req).then(function(route) {
 		if(route) {
 			var direction_id = parseInt(req.params.direction_id, 10),
-				stops = req.params.stops.split('...'),
+				stops = req.params.stop_id.split('...'),
 				from_id = parseInt(stops[0], 10),
 				to_id = parseInt(stops[1], 10);
 
