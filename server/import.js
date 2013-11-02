@@ -46,7 +46,7 @@ if(!agency_arg) {
 
 agencies.where('slug = ?', [agency_arg]).first(function(agency) {
 	if(agency) {
-		var gtfs_path = __dirname + '/../assets/gtfs/' + agency.slug,
+		var gtfs_path = __dirname + '/../data/gtfs/' + agency.slug,
 			stage_path = gtfs_path + '/stage',
 			importer_options = { agency:agency, verbose:verbose, gtfs_path:gtfs_path, stage_path:stage_path },
 			gtfs_importer = importer(importer_options),

@@ -2,6 +2,6 @@
 .DS_Store
 node_modules
 config/local.json
-assets/gtfs
+data/gtfs
 backups
 db-deploy-instructions.md
