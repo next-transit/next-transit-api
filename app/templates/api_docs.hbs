@@ -1,0 +1,218 @@
+<div class="api-docs">
+	<h2>API Docs</h2>
+
+	<a name="intro"></a>
+	<section>
+		<h3>Introduction</h3>
+
+		<div class="api-docs-desc">
+			<p>
+				Data provided by NEXT-Transit is derived from GTFS data provided by each transit agency. 
+				In addition to the default GTFS data, the API provides transformations that may be useful to client applications. 
+				For example, GTFS data is not organized to give a single, canonical list of stops for a given route. 
+				NEXT-Transit data provides this list, as well as a similar simplified shapes for each route.
+				Finally, NEXT-Transit provides paginated next-to-arrive trip results.
+			</p>
+		</div>
+
+		<div class="api-docs-desc">
+			<p>
+				All API requests labeled with <span class="requires-api-key">Requires API Key</span> require your unique API key to be included as a query parameter.<br />
+				Example:
+				<span class="code">GET /routes?api_key=[my_api_key]</span><br />
+				To request access and get an API key, email nextsepta [at] gmail.com.
+			</p>
+		</div>
+
+		<div class="api-docs-desc">
+			<p>Additional notes:</p>
+			<ul class="ul">
+				<li>Agencies are implicit given your API key, so that you don't have to provide it on every request.</li>
+				<li>Therefore, you will need a new key for each agency to which you want to make requests.</li>
+				<li>Every URL-based param can alternatively be passed as a query param. E.g. /agencies?agency_id instead of /agencies/agency_id</li>
+				<li>All requests are limited to 200 results by default.</li>
+			</ul>
+		</div>
+	</section>
+
+	<a name="agencies"></a>
+	<section>
+		<h3>Agencies</h3>
+
+		<div class="box">
+			<p class="api-docs-desc">Transit Agencies (localities) for which data is provided by NEXT-Transit.</p>
+			<div class="code">GET /agencies</div>
+			<div class="code">GET /agencies/[slug]</div>
+			<pre class="code">{
+  "slug": "septa",
+  "agency_name": "SEPTA"
+}</pre>
+		</div>
+	</section>
+
+	<a name="route-types"></a>
+	<section data-requires-api-key>
+		<h3>Route Types</h3>
+
+		<div class="box">
+			<p class="api-docs-desc">Available mode of transit types. E.g. Trains, Subways, Buses, Light Rail, etc.</p>
+			<div class="code">GET /route_types</div>
+			<div class="code">GET /route_types/[route_type_id]</div>
+			<pre class="code">{
+  "route_type_id": 1,
+  "slug": "subways",
+  "label": "Subways",
+  "route_type_order": -1,
+  "color": "#477997",
+  "parent": null
+}</pre>
+		</div>
+	</section>
+
+	<a name="routes"></a>
+	<section data-requires-api-key>
+		<h3>Routes</h3>
+
+		<div class="box">
+			<p class="api-docs-desc">List of routes for an agency.</p>
+			<div class="code">GET /routes</div>
+			<div class="code">GET /routes/[slug]</div>
+			<div class="code">GET /route_types/[route_type_id]/routes</div>
+			<pre class="code">{
+  "slug": "bss",
+  "route_short_name": "BSS",
+  "route_long_name": "ATT Station to Fern Rock TC",
+  "route_desc": null,
+  "route_type": 1,
+  "route_color": "FF9933",
+  "route_text_color": "000000",
+  "route_url": "",
+  "is_rail": false,
+  "has_realtime": false,
+  "route_name": "BSS",
+  "route_type_slug": "subways",
+  "color": "#f58220"
+}</pre>
+		</div>
+	</section>
+
+	<a name="directions"></a>
+	<section data-requires-api-key>
+		<h3>Directions</h3>
+
+		<div class="box">
+			<p class="api-docs-desc">Most routes go in more than one direction. E.g. NorthBound, SouthBound, etc. Direction IDs are always &quot;1&quot; or &quot;2&quot;</p>
+			<div class="code">GET /routes/[slug]/directions</div>
+			<div class="code">GET /routes/[slug]/directions/[direction_id]</div>
+			<pre class="code">{
+  "direction_id": 1,
+  "direction_name": "Northbound",
+  "direction_long_name": "Fern Rock Transportation Center"
+}</pre>
+		</div>
+	</section>
+
+	<a name="simplifiedstops"></a>
+	<section data-requires-api-key>
+		<h3>Simplified Stops</h3>
+
+		<div class="box">
+			<p class="api-docs-desc">A simplified, canonical list of unique, ordered stops for a given route.</p>
+			<div class="code">GET /simplified_stops</div>
+			<div class="code">GET /simplified_stops/[stop_id]</div>
+			<div class="code">GET /routes/[slug]/directions/[direction_id]/stops</div>
+			<pre class="code">{
+  "direction_id": 1,
+  "stop_id": 152,
+  "stop_name": "A T and T Station",
+  "stop_sequence": 1,
+  "stop_lat": "39.905379",
+  "stop_lon": "-75.173709"
+}</pre>
+		</div>
+	</section>
+
+	<a name="shapes"></a>
+	<section data-requires-api-key>
+		<h3>Shapes</h3>
+
+		<div class="box">
+			<p class="api-docs-desc">Simplified routes by route. If a specific route is not provided, a bounding box is required to use as a spatial filter.</p>
+			<div class="code">GET /shapes?bbox=[left,bottom,right,top]</div>
+			<div class="code">GET /routes/[slug]/shapes</div>
+			<pre class="code">[ // shape
+  [ // line segment
+    [ 40.041859, -75.136769 ], // point
+    [ 40.041904, -75.137147 ],
+    [ 40.04195, -75.137644 ],
+    [ 40.041951, -75.13801 ],
+    ...
+  ],
+  [...]
+]</pre>
+		</div>
+	</section>
+
+	<a name="stats"></a>
+	<section data-requires-api-key>
+		<h3>Stats</h3>
+
+		<div class="box">
+			<p class="api-docs-desc">Info about data imports. Shows date of important and counts for each data type.</p>
+			<div class="code">GET /stats</div>
+			<pre class="code">{
+  "id": 11,
+  "shapes_count": 772564,
+  "stops_count": 13635,
+  "routes_count": 151,
+  "directions_count": 302,
+  "simplified_stops_count": 19533,
+  "trips_count": 36544,
+  "trip_variants_count": 1031,
+  "stop_times_count": 2182240,
+  "process_seconds": 0,
+  "created_at": "2013-11-12T18:26:02.000Z",
+  "simplified_shapes_count": 167777
+}</pre>
+		</div>
+	</section>
+
+	<a name="trips"></a>
+	<section data-requires-api-key>
+		<h3>Trips</h3>
+
+		<div class="box">
+			<p class="api-docs-desc">A trip means a single vehicle, traveling along a single route, starting from a specific stop, and at a specific time. Results show the next five trips from a given starting stop, and optionally showing arrival time at a terminating stop.</p>
+			<div class="code">GET /routes/[slug]/directions/[direction_id]/stops/[from_stop_id]/trips</div>
+			<div class="code">GET /routes/[slug]/directions/[direction_id]/stops/[from_stop_id]...[to_stop_id]/trips</div>
+			<pre class="code">{
+  "trip_id": "3886472",
+  "block_id": "1",
+  "departure_stop_time": {
+    "id": 99984738,
+    "trip_id": "3886472",
+    "arrival_time": "14:55:00",
+    "departure_time": "14:55:00",
+    "stop_id": 1285,
+    "stop_sequence": 4,
+    "pickup_type": null,
+    "drop_off_type": null,
+    "stop_count": null,
+    "first_stop_sequence": null,
+    "last_stop_sequence": null
+  },
+  "departure_time_formatted": "2:55 pm",
+  "arrival_stop_time": null,
+  "arrival_time_formatted": "",
+  "from_now": "GONE",
+  "gone": true,
+  "coverage": {
+    "left": 0,
+    "right": null,
+    "full": true
+  },
+  "departure_datetime": "2013-11-14 14:55"
+}</pre>
+		</div>
+	</section>
+</div>

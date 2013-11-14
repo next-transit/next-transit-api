@@ -20,12 +20,20 @@ function Controller(name, require_api_key) {
 					view = null;
 				}
 
-				data.success = true;
-				data.status_code = 200;
+				if(view && typeof view === 'string') {
+					var view_data = extend({ page_name:_self.name }, req.locals, data || {});
+					res.render(view, view_data, function(err, html) {
+						res.send(html);
+					});
+				} else {
+					data.success = true;
+					data.status_code = 200;
 
-				res.type('application/json');
+					res.type('application/json');
 
-				res.send(data);
+					res.send(data);
+				}
+
 			});
 		};
 
@@ -37,7 +45,7 @@ function Controller(name, require_api_key) {
 	};
 
 	_self.action('index', function(req, res, callback) {
-		callback();
+		callback(name.replace(/\-/g, '_'), {});
 	});
 }
 

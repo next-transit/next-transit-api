@@ -1,0 +1,55 @@
+@import "_utils";
+
+.page-index .app-header {
+	padding: 4em 0;
+}
+
+	.page-index .app-header h1 {
+		display: block;
+		margin: 0 0 0.2em;
+		text-align: center;
+		font-size: 3.6em;
+	}
+
+	.page-index .app-header h2 {
+		display: block;
+		font-size: 1em;
+		text-align: center;
+		color: #f0f0f0;
+		text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
+	}
+
+
+.index section {
+	margin-bottom: 2em;
+}
+
+.index article {
+	padding: 0.5em 0.8em;
+	margin-bottom: 0.2em;
+	border-radius: 3px;
+	cursor: pointer;
+}
+.index article:last-child {
+	margin-bottom: 0;
+}
+.index article:hover {
+	background-color: #eee;
+	box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.4);
+}
+	.index article .h4 {
+		margin-bottom: 0;
+	}
+
+.index-coming-soon {
+	color: #aaa;
+}
+.index-coming-soon:after {
+	content: "Coming Soon";
+	margin-left: 1em;
+	padding: 0.2em 0.4em;
+	font-size: 0.6em;
+	background-color: #999;
+	color: #f0f0f0;
+	border-radius: 2px;
+}

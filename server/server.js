@@ -5,12 +5,20 @@ if(process.env.NODETIME_ACCOUNT_KEY) {
 require('date-utils');
 
 var express = require('express'),
+	hbs = require('hbs'),
 	db = require('./lib/db'),
 	router = require('./lib/router'),
 	routes = require('./lib/models/routes'),
 	port = process.env.PORT || 5001;
 
+hbs.registerPartials('./app/templates/partials', function() {});
+
 var app = express();
+
+app.set('view engine', 'hbs');
+app.set('views', './app/templates');
+
+app.use(express.static('./app'));
 app.use(express.compress());
 
 router.routes(app);

@@ -1,0 +1,37 @@
+.api-docs {}
+
+	.api-docs section {
+		margin-top: 3em;
+	}
+
+	.api-docs section[data-requires-api-key] .box {
+		position: relative;
+	}
+	.api-docs section[data-requires-api-key] .box:before, .requires-api-key {
+		padding: 0.4em 0.8em;
+		background-color: #b66;
+		font-size: 0.6em;
+		color: #f0f0f0;
+		text-transform: uppercase;
+		border-radius: 2px;
+		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+	}
+	.api-docs section[data-requires-api-key] .box:before {
+		content: "Requires API Key";
+		position: absolute;
+		top: 0.4em;
+		right: 0.4em;
+	}
+
+	.api-docs-desc {
+		margin-bottom: 1em;
+		padding: 0.6em 1.2em;
+		font-size: 0.8em;
+		background-color: #eee;
+		color: #666;
+		border-radius: 4px;
+		box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
+	}
+		.api-docs-desc li {
+			margin-bottom: 1em;
+		}

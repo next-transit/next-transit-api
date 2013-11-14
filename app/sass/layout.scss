@@ -1,0 +1,39 @@
+@import "_utils";
+
+$bg_color: #5F6F7F;
+$bsl_orange: #f58220;
+$mfl_blue: #107dc1;
+
+.app-header {
+	background-color: $bg_color;
+	color: #f6f6f6;
+	@include border-box;
+}
+
+	.app-header h1 {
+		display: inline-block;
+		margin: 0.4em 1em 0.4em 0;
+		font-size: 1.6em;
+	}
+		.app-header h1 a {
+			color: darken($bg_color, 5%);
+			text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.3),
+					 1px 1px 0px rgba(255, 255, 255, 0.1);
+		}
+
+	.app-header h2 {
+		display: none;
+	}
+		.app-header h2 span {
+			display: inline-block;
+			margin: 0 1em;
+		}
+
+	.layout {
+		margin: 0 auto;
+		max-width: 1024px;
+	}
+
+	.content {
+		padding: 2em 2em;
+	}

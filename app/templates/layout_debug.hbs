@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html module="next-transit-data">
+<head>
+	<title class="js-title">{{app_title}}</title>
+	<meta name="description" content="Transit next stop times and maps.">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+
+	<link rel="shortcut icon" href="/nxs-favicon.ico" type="image/x-icon">
+	<link rel="icon" href="/nxs-favicon.ico" type="image/x-icon">
+	<link rel="apple-touch-icon-precomposed" href="/images/nextsepta-logo-57.png" />
+	<link rel="apple-touch-icon-precomposed" href="/images/nextsepta-logo-72.png" sizes="72x72" />
+	<link rel="apple-touch-icon-precomposed" href="/images/nextsepta-logo-114.png" sizes="114x114" />
+	<link rel="apple-touch-icon-precomposed" href="/images/nextsepta-logo-144.png" sizes="144x144" />
+
+	<link rel="stylesheet" type="text/css" href="/build/css/font-awesome.css" />
+	<link rel="stylesheet" type="text/css" href="/build/css/sour.css" />
+	<link rel="stylesheet" type="text/css" href="/build/css/core.css" />
+	<link rel="stylesheet" type="text/css" href="/build/css/typography.css" />
+	<link rel="stylesheet" type="text/css" href="/build/css/components.css" />
+	<link rel="stylesheet" type="text/css" href="/build/css/layout.css" />
+	<link rel="stylesheet" type="text/css" href="/build/css/index.css" />
+	<link rel="stylesheet" type="text/css" href="/build/css/api_docs.css" />
+</head>
+<body class="page-{{page_name}}" ctrl="app">
+	<div class="container">
+		<header class="app-header">
+			<div class="layout">
+				<h1><a href="/">NEXT-Transit</a></h1>
+				<h2>A Collection of Transit Apps <span>+</span> A Public Data API</h2>
+			</div>
+		</header>
+		<div class="layout content">
+			{{{body}}}
+		</div>
+		<footer class="app-footer">
+		</footer>
+	</div>
+	<script src="/build/app.js?v={{app_version}}"></script>
+</body>
+</html>

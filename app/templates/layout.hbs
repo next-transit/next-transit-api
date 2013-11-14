@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html module="next-transit-data">
+<head>
+	<title class="js-title">{{app_title}}</title>
+	<meta name="description" content="Transit next stop times and maps.">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+	<link rel="icon" href="/favicon.ico" type="image/x-icon">
+	<link rel="apple-touch-icon-precomposed" href="/images/nextsepta-logo-57.png" />
+	<link rel="apple-touch-icon-precomposed" href="/images/nextsepta-logo-72.png" sizes="72x72" />
+	<link rel="apple-touch-icon-precomposed" href="/images/nextsepta-logo-114.png" sizes="114x114" />
+	<link rel="apple-touch-icon-precomposed" href="/images/nextsepta-logo-144.png" sizes="144x144" />
+
+	<link rel="stylesheet" type="text/css" href="/build/app.min.css?v={{app_version}}" />
+</head>
+<body ctrl="app">
+	<div class="container">
+		<header class="app-header">
+			<h1>NEXT-Transit</h1>
+		</header>
+		<div class="content">
+			{{{body}}}
+		</div>
+		<footer class="app-footer">
+		</footer>
+	</div>
+	<script src="/build/app.js?v={{app_version}}"></script>
+</body>
+</html>

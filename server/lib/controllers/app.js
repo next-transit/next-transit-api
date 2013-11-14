@@ -42,6 +42,8 @@ function before(req, res, next) {
 	}
 
 	req.api_key = null;
+	req.locals = req.locals || {};
+	req.locals.app_title = 'NEXT-Transit';
 
 	res.error = function(message, status_code) {
 		res.send(status_code || 500, {
@@ -54,6 +56,12 @@ function before(req, res, next) {
 	res.internal_error = function(err) {
 		console.log('Internal error', err);
 		res.error('Internal error');
+	}
+
+	if(req.query.layout === 'null' || req.query.layout === 'false') {
+		req.locals.layout = null;
+	} else if(config.debug_assets) {
+		req.locals.layout = 'layout_debug';
 	}
 
 	get_api_key(req, next, res.error);

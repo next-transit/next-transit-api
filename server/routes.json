@@ -32,5 +32,6 @@
 
 	"get /stats": { "action":"stats" },
 
+	"get /docs": { "action":"api_docs" },
 	"get /": { "action":"index" }
 }
