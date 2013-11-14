@@ -15,19 +15,22 @@
 	<link rel="apple-touch-icon-precomposed" href="/images/nextsepta-logo-114.png" sizes="114x114" />
 	<link rel="apple-touch-icon-precomposed" href="/images/nextsepta-logo-144.png" sizes="144x144" />
 
-	<link rel="stylesheet" type="text/css" href="/build/app.min.css?v={{app_version}}" />
+	<link rel="stylesheet" type="text/css" href="/dest/app.min.css?v={{app_version}}" />
 </head>
-<body ctrl="app">
+<body class="page-{{page_name}}" ctrl="app">
 	<div class="container">
 		<header class="app-header">
-			<h1>NEXT-Transit</h1>
+			<div class="layout">
+				<h1><a href="/">NEXT-Transit</a></h1>
+				<h2>A Collection of Transit Apps <span>+</span> A Public Data API</h2>
+			</div>
 		</header>
-		<div class="content">
+		<div class="layout content">
 			{{{body}}}
 		</div>
 		<footer class="app-footer">
 		</footer>
 	</div>
-	<script src="/build/app.js?v={{app_version}}"></script>
+	<script src="/dest/app.js?v={{app_version}}"></script>
 </body>
 </html>

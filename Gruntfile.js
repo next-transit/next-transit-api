@@ -41,7 +41,10 @@ module.exports = function(grunt) {
 					'<%= dirs.bower_src %>/sour-ui/css/sour.min.css',
 					'<%= dirs.css_build %>/typography.css', 
 					'<%= dirs.css_build %>/core.css', 
-					'<%= dirs.css_build %>/*.css'
+					'<%= dirs.css_build %>/components.css', 
+					'<%= dirs.css_build %>/layout.css', 
+					'<%= dirs.css_build %>/index.css', 
+					'<%= dirs.css_build %>/api_docs.css'
 				],
 				dest: '<%= dirs.build %>/app.css'
 			},
