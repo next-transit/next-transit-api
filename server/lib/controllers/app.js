@@ -1,4 +1,5 @@
-var api_keys = require('../models/api_keys'),
+var package = require(__dirname + '/../../../package.json'),
+	api_keys = require('../models/api_keys'),
 	agencies = require('../models/agencies');
 
 function get_agency(req, success, error) {
@@ -44,6 +45,7 @@ function before(req, res, next) {
 	req.api_key = null;
 	req.locals = req.locals || {};
 	req.locals.app_title = 'NEXT-Transit';
+	req.locals.app_version = package.version;
 
 	res.error = function(message, status_code) {
 		res.send(status_code || 500, {
