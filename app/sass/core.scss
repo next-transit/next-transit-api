@@ -10,3 +10,7 @@ body {
 	padding-left: 1.2em;
 	list-style: disc;
 }
+
+p > a {
+	border-bottom: 2px solid #888;
+}
