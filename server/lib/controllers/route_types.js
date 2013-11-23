@@ -18,10 +18,11 @@ ctrl.action('index', function(req, res, callback) {
 });
 
 ctrl.action('item', function(req, res, callback) {
-	var route_type_id = (req.params.route_type_id || '').toLowerCase();
+	var route_type_id = req.params.route_type_id.toLowerCase(),
+		route_type_id_int = parseInt(route_type_id, 10) || 0;
 
 	route_types.query(req.agency.id)
-		.where('agency_id = ? AND lower(slug) = ?', [req.agency.id, route_type_id])
+		.where('agency_id = ? AND route_type_id IS NOT NULL AND (lower(slug) = ? OR route_type_id = ?)', [req.agency.id, route_type_id, route_type_id_int])
 		.error(res.internal_error)
 		.first(function(route_type) {
 			if(route_type) {
