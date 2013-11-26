@@ -27,6 +27,8 @@
 
 	"get /routes/:route_id/directions/:direction_id/stops/:stop_id/trips": { "action":"display_trips:trips" },
 
+	"get /trips": { "action":"trips:index" },
+
 	"get /shapes": { "action":"shapes:bbox" },
 	"get /routes/:route_id/shapes": { "action":"shapes" },
 
