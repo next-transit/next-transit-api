@@ -40,22 +40,26 @@ ctrl.action('item', function(req, res, success) {
 		direction_id = (req.params.direction_id || ''),
 		stop_id = (req.params.stop_id || '');
 
-	var query = simplified_stops.query().error(req.internal_error);
+	routes
+		.where('agency_id = ? AND (lower(route_id) = ? OR lower(route_short_name) = ?)', [req.agency.id, route_id, route_id])
+		.error(req.internal_error)
+		.first(function(route) {
+			var query = simplified_stops.query().error(req.internal_error);
 
-	if(id) {
-		query.where('agency_id = ? AND id = ?', [req.agency.id, parseInt(id, 10)]);
-	} else {
-		id = parseInt(id, 10);
-		direction_id = parseInt(direction_id, 10);
-		stop_id = parseInt(stop_id, 10);
-		query.where('agency_id = ? AND route_id = ? AND direction_id = ? AND stop_id = ?', [req.agency.id, route_id, direction_id, stop_id]);
-	}
+			if(id) {
+				query.where('agency_id = ? AND id = ?', [req.agency.id, parseInt(id, 10)]);
+			} else {
+				direction_id = parseInt(direction_id, 10);
+				stop_id = parseInt(stop_id, 10);
+				query.where('agency_id = ? AND route_id = ? AND direction_id = ? AND stop_id = ?', [req.agency.id, route.route_id, direction_id, stop_id]);
+			}
 
-	query.first(function(results) {
-		success({
-			data: simplified_stops.public(results)
+			query.first(function(results) {
+				success({
+					data: simplified_stops.public(results)
+				});
+			});
 		});
-	});
 });
 
 module.exports = ctrl;
