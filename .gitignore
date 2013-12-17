@@ -6,3 +6,5 @@ data/gtfs
 app/build
 backups
 db-deploy-instructions.md
+
+*.log
