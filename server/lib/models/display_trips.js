@@ -73,6 +73,16 @@ function convert_list(agency_id, stop_times, to_id, callback) {
 
 var trips = {};
 
+trips.get_by_day = function(agency_id, is_rail, route_id, direction_id, from_id, day_of_week) {
+	return new promise(function(resolve, reject) {
+		stop_times.get_by_day(agency_id, is_rail, route_id, direction_id, from_id, day_of_week).then(function(times, count) {
+			convert_list(agency_id, times, null, function(trips) {
+				resolve(trips, count);
+			});
+		}, reject);
+	});
+};
+
 trips.get_by_time = function(agency_id, is_rail, route_id, direction_id, from_id, offset, to_id, success, error) {
 	stop_times.get_by_time(agency_id, is_rail, route_id, direction_id, from_id, offset, function(times) {
 		convert_list(agency_id, times, to_id, function(trips) {

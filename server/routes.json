@@ -25,6 +25,7 @@
 	"get /routes/:route_id/directions/:direction_id/stops/:stop_id": { "action":"simplified_stops:item" },
 	"get /routes/:route_id/directions/:direction_id/stops": { "action":"simplified_stops:index" },
 
+	"get /routes/:route_id/directions/:direction_id/stops/:stop_id/all_trips": { "action":"display_trips:index" },
 	"get /routes/:route_id/directions/:direction_id/stops/:stop_id/trips": { "action":"display_trips:trips" },
 
 	"get /trips": { "action":"trips:index" },
@@ -35,5 +36,6 @@
 	"get /stats": { "action":"stats" },
 
 	"get /docs": { "action":"api_docs" },
+	"get /sample": { "action":"sample" },
 	"get /": { "action":"index" }
 }

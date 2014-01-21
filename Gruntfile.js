@@ -7,6 +7,7 @@ module.exports = function(grunt) {
 			css_src: 'app/css',
 			css_build: 'app/build/css',
 			js_src: 'app/js',
+			js_build: 'app/build/js',
 			build: 'app/build',
 			dest: 'app/dest'
 		},
@@ -18,10 +19,14 @@ module.exports = function(grunt) {
 				files: {
 					'<%=dirs.css_build %>/core.css': '<%=dirs.sass_src %>/core.scss',
 					'<%=dirs.css_build %>/typography.css': '<%=dirs.sass_src %>/typography.scss',
+					'<%=dirs.css_build %>/buttons.css': '<%=dirs.sass_src %>/buttons.scss',
+					'<%=dirs.css_build %>/tables.css': '<%=dirs.sass_src %>/tables.scss',
+					'<%=dirs.css_build %>/forms.css': '<%=dirs.sass_src %>/forms.scss',
 					'<%=dirs.css_build %>/components.css': '<%=dirs.sass_src %>/components.scss',
 					'<%=dirs.css_build %>/layout.css': '<%=dirs.sass_src %>/layout.scss',
 					'<%=dirs.css_build %>/index.css': '<%=dirs.sass_src %>/index.scss',
-					'<%=dirs.css_build %>/api_docs.css': '<%=dirs.sass_src %>/api_docs.scss'
+					'<%=dirs.css_build %>/api_docs.css': '<%=dirs.sass_src %>/api_docs.scss',
+					'<%=dirs.css_build %>/sample.css': '<%=dirs.sass_src %>/sample.scss'
 				}
 			}
 		},
@@ -32,7 +37,9 @@ module.exports = function(grunt) {
 			bower_debug: {
 				files: {
 					'<%= dirs.css_build %>/font-awesome.css': ['<%= dirs.bower_src %>/font-awesome/css/font-awesome.css'],
-					'<%= dirs.css_build %>/sour.css': ['<%= dirs.bower_src %>/sour-ui/css/sour.css']
+					'<%= dirs.css_build %>/sour.css': ['<%= dirs.bower_src %>/sour-ui/css/sour.css'],
+					'<%= dirs.js_build %>/jquery.js': ['<%= dirs.bower_src %>/jquery/jquery.js'],
+					'<%= dirs.js_build %>/sour.js': ['<%= dirs.bower_src %>/sour-ui/javascript/sour.js']
 				}
 			},
 			css: {
@@ -41,10 +48,14 @@ module.exports = function(grunt) {
 					'<%= dirs.bower_src %>/sour-ui/css/sour.min.css',
 					'<%= dirs.css_build %>/typography.css', 
 					'<%= dirs.css_build %>/core.css', 
+					'<%= dirs.css_build %>/buttons.css', 
+					'<%= dirs.css_build %>/tables.css', 
+					'<%= dirs.css_build %>/forms.css', 
 					'<%= dirs.css_build %>/components.css', 
 					'<%= dirs.css_build %>/layout.css', 
 					'<%= dirs.css_build %>/index.css', 
-					'<%= dirs.css_build %>/api_docs.css'
+					'<%= dirs.css_build %>/api_docs.css', 
+					'<%= dirs.css_build %>/sample.css'
 				],
 				dest: '<%= dirs.build %>/app.css'
 			},

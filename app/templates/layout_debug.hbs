@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html module="next-transit-data">
+<html module="next-transit-api">
 <head>
 	<title class="js-title">{{app_title}}</title>
 	<meta name="description" content="Transit next stop times and maps.">
@@ -19,10 +19,14 @@
 	<link rel="stylesheet" type="text/css" href="/build/css/sour.css" />
 	<link rel="stylesheet" type="text/css" href="/build/css/core.css" />
 	<link rel="stylesheet" type="text/css" href="/build/css/typography.css" />
+	<link rel="stylesheet" type="text/css" href="/build/css/buttons.css" />
+	<link rel="stylesheet" type="text/css" href="/build/css/tables.css" />
+	<link rel="stylesheet" type="text/css" href="/build/css/forms.css" />
 	<link rel="stylesheet" type="text/css" href="/build/css/components.css" />
 	<link rel="stylesheet" type="text/css" href="/build/css/layout.css" />
 	<link rel="stylesheet" type="text/css" href="/build/css/index.css" />
 	<link rel="stylesheet" type="text/css" href="/build/css/api_docs.css" />
+	<link rel="stylesheet" type="text/css" href="/build/css/sample.css" />
 </head>
 <body class="page-{{page_name}}" ctrl="app">
 	<div class="container">
@@ -38,6 +42,9 @@
 		<footer class="app-footer">
 		</footer>
 	</div>
-	<script src="/build/app.js?v={{app_version}}"></script>
+	<script src="/build/js/jquery.js"></script>
+	<script src="/build/js/sour.js"></script>
+	<script src="/js/controllers/app.js"></script>
+	<script src="/js/controllers/sample.js"></script>
 </body>
 </html>

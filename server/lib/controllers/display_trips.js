@@ -14,10 +14,32 @@ function get_route(req) {
 	});
 }
 
+ctrl.action('index', function(req, res, success) {
+	var route = req.route,
+		direction = req.direction,
+		from_stop = req.from_stop;
+
+	get_route(req).then(function(route) {
+		var direction_id = parseInt(req.params.direction_id, 10),
+			from_id = parseInt(req.params.stop_id, 10),
+			day_of_week = parseInt(req.query.day, 10);
+
+		if(day_of_week.toString() === 'NaN') {
+			day_of_week = req.query.day;
+		}
+
+		display_trips.get_by_day(req.agency.id, route.is_rail, route.route_id, direction_id, from_id, day_of_week).then(function(trips, count) {
+			success({
+				data: trips,
+				count: trips.length,
+				total_count: count
+			});
+		}, res.internal_error);
+	}, res.internal_error);
+});
+
 ctrl.action('trips', function(req, res, success) {
-	var route = req.route, 
-		direction = req.direction, 
-		offset = 0,
+	var offset = 0,
 		view = 'trips';
 
 	if(req.query.offset) {

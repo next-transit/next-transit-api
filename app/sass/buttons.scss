@@ -1,0 +1,49 @@
+@import "_utils";
+
+$bg_color: #5f6f7f;
+
+/* BUTTONS */
+.btn {
+	display: inline-block;
+	padding: 0.5em 1.0em;
+	vertical-align: middle;
+	line-height: normal;
+	border: 0;
+	background-color: $bg_color;
+	background-repeat: no-repeat;
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: #fff;
+	cursor: pointer;
+	border-radius: 8px;
+}
+a.btn {
+	color: #fff;
+	text-decoration: none;
+}
+input[type=button].btn {
+	-webkit-appearance: none;
+	   -moz-appearance: none;
+}
+.btn:hover, .btn:focus {
+	outline: 0;
+	background-color: lighten($bg_color, 5%);
+}
+.btn:active {
+	background-color: darken($bg_color, 5%);
+}
+.btn.disabled, .btn[disabled] {
+	opacity: 0.6;
+	cursor: default;
+}
+.btn.disabled:hover, .btn[disabled]:hover, .btn.disabled:focus, .btn[disabled]:focus {
+	background-color: lighten($bg_color, 20%);
+}
+
+/* Sizes */
+.btn.large, .btn.xlarge, .btn.xxlarge, .btn.huge {
+	font-weight: bold;
+}
+.btn.small, .btn.xsmall, .btn.tiny {
+	padding: 0.8em 1.2em;
+}

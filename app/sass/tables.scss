@@ -1,0 +1,101 @@
+@import "_utils";
+
+$table_border_color: lighten($border_color, 10%);
+$border_radius: 4px;
+
+table {
+	max-width: 100%;
+	background-color: #fff;
+	border-radius: $border_radius;
+}
+
+.table {
+	width: 100%;
+	margin-bottom: 1em;
+	font-size: 0.9rem;
+}
+
+.table th, 
+.table td {
+	padding: 0.4rem;
+	line-height: 20px;
+	text-align: left;
+	vertical-align: top;
+}
+
+.table th {
+	vertical-align: bottom;
+	background-color: darken(#fff, 5%);
+	font-size: 0.7rem;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+.table td {
+	border-top: 1px solid $table_border_color;
+}
+
+.table tfoot td {
+	font-size: 0.8rem;
+}
+
+.table tbody + tbody {
+	border-top: 2px solid $table_border_color;
+}
+
+.table thead:first-child tr:first-child > th:first-child,
+.table tbody:first-child tr:first-child > td:first-child {
+	-webkit-border-top-left-radius: $border_radius;
+	   -moz-border-top-left-radius: $border_radius;
+			border-top-left-radius: $border_radius;
+}
+
+.table thead:first-child tr:first-child > th:last-child,
+.table tbody:first-child tr:first-child > td:last-child {
+	-webkit-border-top-right-radius: $border_radius;
+	   -moz-border-top-right-radius: $border_radius;
+			border-top-right-radius: $border_radius;
+}
+
+.table tbody:last-child tr:last-child > td:first-child,
+.table tfoot:last-child tr:last-child > th:first-child {
+	-webkit-border-bottom-left-radius: $border_radius;
+	   -moz-border-bottom-left-radius: $border_radius;
+			border-bottom-left-radius: $border_radius;
+}
+
+.table tbody:last-child tr:last-child > td:last-child,
+.table tfoot:last-child tr:last-child > th:last-child {
+	-webkit-border-bottom-right-radius: $border_radius;
+	   -moz-border-bottom-right-radius: $border_radius;
+			border-bottom-right-radius: $border_radius;
+}
+
+/* Bordered */
+
+.table-bordered {
+	border: 1px solid $table_border_color;
+	border-collapse: separate;
+	border-left: 0;
+}
+
+.table-bordered th, 
+.table-bordered td {
+	border-left: 1px solid $table_border_color;
+}
+
+.table-bordered thead:first-child tr:first-child th,
+.table-bordered tbody:first-child tr:first-child td {
+	border-top: 0;
+}
+
+/* Striped */
+
+.table-striped tbody > tr:nth-child(odd) td {
+	background-color: lighten(#ccc, 3%);
+}
+
+/* Hover */
+.table-hover tbody tr:hover td {
+	background-color: darken(#ccc, 3%);
+}
