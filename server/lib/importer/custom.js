@@ -37,13 +37,13 @@ function write_data(data, write_path, columns, custom_timer) {
 	});
 }
 
-function import_custom(title, process, file_name, columns) {
+function import_custom(title, process, file_name, columns, total_timer) {
 	return new promise(function(resolve, reject) {
 		var custom_timer = timer('\n' + title, true),
 			write_path = options.stage_path + '/' + file_name + '.txt',
 			extended_columns = (columns || []).concat(['created_at', 'updated_at', 'agency_id']);
 
-		process(file_name, extended_columns, write_path, custom_timer).then(resolve, reject);
+		process(file_name, extended_columns, write_path, custom_timer, total_timer).then(resolve, reject);
 	});
 }
 
@@ -91,7 +91,7 @@ function import_trip_variants(file_name, columns, write_path, custom_timer) {
 	});
 }
 
-function generate_stats() {
+function generate_stats(file_name, columns, write_path, custom_timer, total_timer) {
 	return new promise(function(resolve, reject) {
 		var models = ['shapes', 'stops', 'routes', 'directions', 'simplified_stops', 'trips', 'trip_variants', 'stop_times', 'simplified_shapes'],
 			promises = [],
@@ -119,7 +119,7 @@ function generate_stats() {
 			var stats_data = {
 				agency_id: options.agency.id,
 				created_at: new Date().toFormat('YYYY-MM-DD HH24:MI:SS'), 
-				process_seconds: 0
+				process_seconds: Math.round(total_timer.get_seconds())
 			};
 
 			model_counts.forEach(function(model_count) {
@@ -146,8 +146,8 @@ function custom_importer(opts) {
 		import_trip_variants: function(file_name, columns) {
 			return import_custom('Generating Trip Variants', import_trip_variants, file_name, columns);
 		},
-		generate_stats: function(file_name, columns) {
-			return import_custom('Generating Import Stats', generate_stats, file_name, columns);
+		generate_stats: function(file_name, columns, total_timer) {
+			return import_custom('Generating Import Stats', generate_stats, file_name, columns, total_timer);
 		}
 	};
 }

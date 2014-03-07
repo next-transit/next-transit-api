@@ -57,7 +57,7 @@ agencies.where('slug = ?', [agency_arg]).first(function(agency) {
 			return function(next, error) {
 				if(type === 'all' || type === file_name) {
 					if(custom_type) {
-						custom_importer[custom_type](file_name, columns[file_name]).then(next, error);
+						custom_importer[custom_type](file_name, columns[file_name], total_timer).then(next, error);
 					} else {
 						gtfs_importer.import_type(import_type, file_name, columns[file_name]).then(next, error);	
 					}
