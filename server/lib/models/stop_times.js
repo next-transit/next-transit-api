@@ -7,17 +7,19 @@ var SERVICE_IDS_BUS = ['7', '1', '1', '1', '1', '1', '5'],
 	TIME_FORMAT = 'HH24:MI:SS',
 	DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
-function get_stops(agency_id, route_id, direction_id, from_id, service_id, compare_time, compare_dir, sort_dir, limit, offset) {
+function get_stops(agency_id, route_id, direction_id, from_id, day, date_str, compare_time, compare_dir, sort_dir, limit, offset) {
 	return new promise(function(resolve, reject) {
 		sort_dir = sort_dir || 'asc';
 		limit = limit || 0;
 		offset = offset || 0;
 
 		var q = stop_times.query()
-			.select('distinct stop_times.*, t.block_id, tv.stop_count, tv.first_stop_sequence, tv.last_stop_sequence')
-			.join('join trips t ON stop_times.trip_id = t.trip_id AND t.agency_id = ?')
-			.join('left outer join trip_variants tv ON t.trip_variant_id = tv.id')
-			.where('stop_times.agency_id = ? AND t.route_id = ? AND stop_id = ? AND t.direction_id = ? AND service_id = ?', [agency_id, agency_id, route_id, from_id, direction_id, service_id])
+			.select('DISTINCT stop_times.*, t.block_id, tv.stop_count, tv.first_stop_sequence, tv.last_stop_sequence')
+			.join('JOIN trips t ON stop_times.trip_id = t.trip_id AND t.agency_id = ?')
+			.join('LEFT OUTER JOIN trip_variants tv ON t.trip_variant_id = tv.id')
+			.where('stop_times.agency_id = ? AND t.route_id = ? AND stop_id = ? AND t.direction_id = ?', [agency_id, agency_id, route_id, from_id, direction_id])
+			.where_if('service_id IN (SELECT service_id FROM calendar_dates WHERE agency_id = ? AND (exact_date = ? OR (' + day + ' = true AND start_date <= ? AND end_date > ?)))', [agency_id, date_str, date_str, date_str], date_str)
+			.where_if('service_id IN (SELECT service_id FROM calendar_dates WHERE agency_id = ? AND ' + day + ' = true', [], !date_str)
 			.where_if('departure_time ' + compare_dir + ' ?', [compare_time], compare_time)
 			.orders('departure_time ' + sort_dir)
 			.error(reject);
@@ -27,6 +29,8 @@ function get_stops(agency_id, route_id, direction_id, from_id, service_id, compa
 		} else {
 			q.count(true);
 		}
+
+		q.sql();
 
 		q.done(function(times, count) {
 			if(sort_dir === 'desc') {
@@ -49,17 +53,14 @@ stop_times.get_by_day = function(agency_id, is_rail, route_id, direction_id, fro
 			day_of_week = (new Date()).getDay();
 		}
 
-		var service = is_rail ? SERVICE_IDS_RAIL : SERVICE_IDS_BUS,
-			service_id = service[day_of_week];
-
-		get_stops(agency_id, route_id, direction_id, from_id, service_id).then(resolve, reject);
+		get_stops(agency_id, route_id, direction_id, from_id, DAYS[day_of_week], date_str).then(resolve, reject);
 	});
 };
 
 stop_times.get_by_time = function(agency_id, is_rail, route_id, direction_id, from_id, offset, success, error) {
 	var now = date().add({ minutes:-5 }),
-		service = is_rail ? SERVICE_IDS_RAIL : SERVICE_IDS_BUS,
-		service_id = service[now.getDay()],
+		day = DAYS[now.getDay()],
+		date_str = now.toDateFormat(),
 		sort_dir = 'asc',
 		compare_dir = '>',
 		compare_time = now.toFormat(TIME_FORMAT),
@@ -82,7 +83,9 @@ stop_times.get_by_time = function(agency_id, is_rail, route_id, direction_id, fr
 		offset = Math.abs(offset);
 	}
 
-	get_stops(agency_id, route_id, direction_id, from_id, service_id, compare_time, compare_dir, sort_dir, limit, offset).then(success, error);
+	console.log(agency_id, route_id, direction_id, from_id, day, date_str, compare_time, compare_dir, sort_dir, limit, offset)
+
+	get_stops(agency_id, route_id, direction_id, from_id, day, date_str, compare_time, compare_dir, sort_dir, limit, offset).then(success, error);
 };
 
 module.exports = stop_times;

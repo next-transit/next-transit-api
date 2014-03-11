@@ -32,6 +32,11 @@ transforms.stop_times = function(record) {
 	}
 };
 
+transforms.calendar_dates = function(record) {
+	record.monday = record.tuesday = record.wednesday = record.thursday = record.friday = record.saturday = record.sunday = 1;
+	record.exact_date = record.date;
+};
+
 module.exports = {
 	get_transform: function(type) {
 		return transforms[type] || noop

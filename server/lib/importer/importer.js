@@ -71,9 +71,9 @@ function importer(opts) {
 	var self = {},		
 		paths = (options.agency.import_paths || '/').split(',');
 
-	self.import_type = function import_type(title, file_name, columns) {
+	self.import_type = function import_type(title, file_name, columns, model_name) {
 		return new promise(function(resolve, reject) {
-			var model = require('../models/' + file_name),
+			var model = require('../models/' + (model_name || file_name)),
 				total_timer = timer('\nImporting ' + title, true),
 				read_timer = timer(),
 				write_timer = timer(),

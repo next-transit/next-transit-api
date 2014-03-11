@@ -70,6 +70,7 @@ function DateUtil(dt) {
 	this.getDay = function() { return this._dt.getDay(); };
 	this.getHours = function() { return this._dt.getHours(); };
 	this.toFormat = function(format) { return this._dt.toFormat(format); };
+	this.toDateFormat = function() { return this._dt.toFormat(date_format) };
 	this.add = function(toAdd) { this._dt.add(toAdd); return self; };
 	this.dateFromTime = curry(dateFromTime)(this._dt);
 	this.formatTime = curry(formatTime)(this._dt);

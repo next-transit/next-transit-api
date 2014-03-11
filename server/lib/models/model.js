@@ -294,48 +294,43 @@ Model.prototype.query = function(agency_id) {
 	return query;
 };
 
-Model.prototype.update = function(set, params) {
-	var query = {}, model = this, sets = [], q = {};
+Model.prototype.update = function(data) {
+	var query = {}, model = this, sets = [], q = { params:[] };
 
-	function fn(param) {
-		return function(val) {
-			q[param] = val;
-			return query;
-		};
-	}
+	data.updated_at = new Date;
 
-	query.error = fn('error');
-
-	function add_params(params) {
-		if(q.params) {
-			q.params = q.params.concat(params);
-		} else {
-			q.params = params;
+	for(var field in data) {
+		if(data.hasOwnProperty(field) && field !== 'id') {
+			sets.push(field + ' = ?');
+			q.params.push(data[field]);
 		}
 	}
 
-	query.set = function(set, params) {
-		sets.push(set);
-		q.set = sets.join(', ');
-		add_params(params);
+	query.error = function(fn) {
+		q.error = fn;
 		return query;
 	};
 
 	query.where = function(where, params) {
 		q.where = where;
-		add_params(params);
+		q.params = q.params.concat(params);
 		return query;
 	};
 
 	query.commit = function(callback) {
-		var sql = generate_update_sql(model.table, q.set, q.params, q.where);
+		var set_clauses = sets.join(', ');
+			sql = generate_update_sql(model.table, set_clauses, q.params, q.where);
+
+		console.log(sql, q.params);
 		execute_query(sql, q.params, function() {
-			callback();
+			if(typeof callback === 'function') {
+				callback(data);
+			}
 		}, q.error);
 	};
 
-	if(set) {
-		query.set(set, params);
+	if(typeof data.id !== 'undefined') {
+		query.where('id = ?', [data.id]);
 	}
 
 	return query;
@@ -354,7 +349,7 @@ Model.prototype.truncate = function(agency_id, success, error) {
 Model.prototype.import = function(agency_id, columns, file_path, success, error) {
 	var self = this;
 	self.truncate(agency_id, function() {
-		var sql = 'COPY ' + self.table + ' (' + columns.join(', ') + ') FROM \'' + file_path + '\';';
+		var sql = 'COPY ' + self.table + ' (' + columns.join(', ') + ') FROM \'' + file_path + '\' WITH NULL \'NULL\';';
 		execute_query(sql, null, success, error);
 	}, error);
 };

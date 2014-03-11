@@ -7,6 +7,8 @@ var promise = require('promise'),
 	config = require('./lib/util/config'),
 	agencies = require('./lib/models/agencies'),
 	columns = {
+		calendar: ['service_id', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'start_date', 'end_date'],
+		calendar_dates: ['service_id', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'exact_date'],
 		shapes: ['shape_id', 'shape_pt_lat', 'shape_pt_lon', 'shape_pt_sequence'],
 		stops: ['stop_id', 'stop_name', 'stop_lat', 'stop_lon', 'location_type', 'parent_station', 'zone_id'],
 		trips: ['route_id', 'service_id', 'trip_id', 'trip_headsign', 'block_id', 'direction_id', 'trip_short_name', 'shape_id'],
@@ -53,13 +55,13 @@ agencies.where('slug = ?', [agency_arg]).first(function(agency) {
 			custom_importer = custom(importer_options),
 			total_timer = timer();
 
-		function add_type(import_type, file_name, custom_type) {
+		function add_type(import_type, file_name, custom_type, model_name, columns_name) {
 			return function(next, error) {
 				if(type === 'all' || type === file_name) {
 					if(custom_type) {
 						custom_importer[custom_type](file_name, columns[file_name], total_timer).then(next, error);
 					} else {
-						gtfs_importer.import_type(import_type, file_name, columns[file_name]).then(next, error);	
+						gtfs_importer.import_type(import_type, file_name, columns[file_name], model_name).then(next, error);	
 					}
 				} else {
 					next();
@@ -68,6 +70,8 @@ agencies.where('slug = ?', [agency_arg]).first(function(agency) {
 		}
 
 		sequential
+			.add(add_type('Calendar', 'calendar', null, 'calendar_dates'))
+			.add(add_type('Calendar Exceptions', 'calendar_dates'))
 			.add(add_type('Shapes', 'shapes'))
 			.add(add_type('Stops', 'stops'))
 			.add(add_type('Trips', 'trips'))

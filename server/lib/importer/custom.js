@@ -9,6 +9,7 @@ var fs = require('fs'),
 	simplified_shapes = require('../models/simplified_shapes'),
 	simplified_stops = require('../models/simplified_stops'),
 	trip_variants = require('../models/trip_variants'),
+	calendar_dates = require('../models/calendar_dates'),
 	stats = require('../models/stats'),
 	options;
 
