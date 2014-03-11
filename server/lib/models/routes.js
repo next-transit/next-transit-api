@@ -65,6 +65,8 @@ routes.process = function(agency_id, data, callback) {
 		process_route(data).then(callback, function(err) {
 			console.log('Error processing routes', err);
 		});
+	} else {
+		callback();
 	}
 };
 

@@ -50,6 +50,7 @@ ctrl.action('show', function(req, res, callback) {
 			if(route) {
 				callback({ data:routes.public(route) });	
 			} else {
+				console.log('Route could not be found.')
 				res.error('Route could not be found.', 404);
 			}
 		});

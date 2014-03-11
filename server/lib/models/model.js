@@ -321,7 +321,6 @@ Model.prototype.update = function(data) {
 		var set_clauses = sets.join(', ');
 			sql = generate_update_sql(model.table, set_clauses, q.params, q.where);
 
-		console.log(sql, q.params);
 		execute_query(sql, q.params, function() {
 			if(typeof callback === 'function') {
 				callback(data);
