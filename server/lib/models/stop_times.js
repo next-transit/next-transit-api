@@ -30,8 +30,6 @@ function get_stops(agency_id, route_id, direction_id, from_id, day, date_str, co
 			q.count(true);
 		}
 
-		q.sql();
-
 		q.done(function(times, count) {
 			if(sort_dir === 'desc') {
 				times.reverse();
@@ -82,8 +80,6 @@ stop_times.get_by_time = function(agency_id, is_rail, route_id, direction_id, fr
 
 		offset = Math.abs(offset);
 	}
-
-	console.log(agency_id, route_id, direction_id, from_id, day, date_str, compare_time, compare_dir, sort_dir, limit, offset)
 
 	get_stops(agency_id, route_id, direction_id, from_id, day, date_str, compare_time, compare_dir, sort_dir, limit, offset).then(success, error);
 };
