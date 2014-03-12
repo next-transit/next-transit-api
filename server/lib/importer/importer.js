@@ -18,9 +18,9 @@ function copy_to_database(file_name, model, columns, success, error) {
 	}, error);
 }
 
-function import_path(type, read_path, write_stream, model, columns) {
+function import_path(agency_slug, type, read_path, write_stream, model, columns) {
 	return new promise(function(resolve, reject) {
-		var transform = transforms.get_transform(type),
+		var transform = transforms.get_transform(type, agency_slug),
 			date_str = new Date().toFormat('YYYY-MM-DD HH24:MI:SS');
 
 		csv()
@@ -45,7 +45,7 @@ function import_path(type, read_path, write_stream, model, columns) {
 	});
 }
 
-function add_path_sequence(first, path, file_name, write_path, model, columns) {
+function add_path_sequence(first, path, agency_slug, file_name, write_path, model, columns) {
 	return function(next, error) {
 		var flags = first ? 'w' : 'a',
 			read_path = path + '/' + file_name + '.txt',
@@ -55,7 +55,7 @@ function add_path_sequence(first, path, file_name, write_path, model, columns) {
 			write_stream.write('\n');
 		}
 
-		import_path(file_name, read_path, write_stream, model, columns).then(function() {
+		import_path(agency_slug, file_name, read_path, write_stream, model, columns).then(function() {
 			write_stream.end();
 		}, error);
 
@@ -71,7 +71,7 @@ function importer(opts) {
 	var self = {},		
 		paths = (options.agency.import_paths || '/').split(',');
 
-	self.import_type = function import_type(title, file_name, columns, model_name) {
+	self.import_type = function import_type(agency_slug, title, file_name, columns, model_name) {
 		return new promise(function(resolve, reject) {
 			var model = require('../models/' + (model_name || file_name)),
 				total_timer = timer('\nImporting ' + title, true),
@@ -90,7 +90,7 @@ function importer(opts) {
 
 			paths.forEach(function(path) {
 				path = options.gtfs_path + trim(path);
-				sequencer.add(add_path_sequence(first, path, file_name, write_path, model, extended_columns));
+				sequencer.add(add_path_sequence(first, path, agency_slug, file_name, write_path, model, extended_columns));
 				first = false;
 			});
 

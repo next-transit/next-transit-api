@@ -38,7 +38,15 @@ transforms.calendar_dates = function(record) {
 };
 
 module.exports = {
-	get_transform: function(type) {
-		return transforms[type] || noop
+	get_transform: function(type, agency_slug) {
+		return function (record) {
+			// Run standard transform if it exists for type.
+			(transforms[type] || noop)(record);
+
+			// Attempt to load agency-specific transform and run for type
+			try {
+				(require('./agencies/' + agency_slug + '/transforms')[type] || noop)(record);
+			} catch(e) { }
+		};
 	}
 };

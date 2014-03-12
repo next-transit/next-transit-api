@@ -61,7 +61,7 @@ agencies.where('slug = ?', [agency_arg]).first(function(agency) {
 					if(custom_type) {
 						custom_importer[custom_type](file_name, columns[file_name], total_timer).then(next, error);
 					} else {
-						gtfs_importer.import_type(import_type, file_name, columns[file_name], model_name).then(next, error);	
+						gtfs_importer.import_type(agency.slug, import_type, file_name, columns[file_name], model_name).then(next, error);	
 					}
 				} else {
 					next();
