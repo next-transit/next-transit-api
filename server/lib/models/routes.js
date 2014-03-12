@@ -53,7 +53,7 @@ routes.sort_by_short_name = function(routes) {
 };
 
 routes.process = function(agency_id, data, callback) {
-	if(data && data.length) {
+	if(data && Array.isArray(data)) {
 		var promises = [];
 		data.forEach(function(route) {
 			promises.push(process_route(route));
