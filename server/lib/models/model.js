@@ -345,11 +345,15 @@ Model.prototype.truncate = function(agency_id, success, error) {
 	execute_query('DELETE FROM ' + this.table + ' WHERE agency_id = $1;', [agency_id], success, error);
 };
 
+Model.prototype.import_only = function(agency_id, columns, file_path, success, error) {
+	var sql = 'COPY ' + this.table + ' (' + columns.join(', ') + ') FROM \'' + file_path + '\' WITH NULL \'NULL\';';
+	execute_query(sql, null, success, error);
+};
+
 Model.prototype.import = function(agency_id, columns, file_path, success, error) {
 	var self = this;
 	self.truncate(agency_id, function() {
-		var sql = 'COPY ' + self.table + ' (' + columns.join(', ') + ') FROM \'' + file_path + '\' WITH NULL \'NULL\';';
-		execute_query(sql, null, success, error);
+		self.import_only(agency_id, columns, file_path, success, error);
 	}, error);
 };
 

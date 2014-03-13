@@ -33,7 +33,8 @@ transforms.stop_times = function(record) {
 };
 
 transforms.calendar_dates = function(record) {
-	record.monday = record.tuesday = record.wednesday = record.thursday = record.friday = record.saturday = record.sunday = 1;
+	var days_bool = record.exception_type === '1' ? 1 : 0;
+	record.monday = record.tuesday = record.wednesday = record.thursday = record.friday = record.saturday = record.sunday = days_bool;
 	record.exact_date = record.date;
 };
 

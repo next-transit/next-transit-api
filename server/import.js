@@ -55,13 +55,20 @@ agencies.where('slug = ?', [agency_arg]).first(function(agency) {
 			custom_importer = custom(importer_options),
 			total_timer = timer();
 
-		function add_type(import_type, file_name, custom_type, model_name, columns_name) {
+		function add_type(import_type, file_name, custom_type, model_name, no_truncate) {
 			return function(next, error) {
 				if(type === 'all' || type === file_name) {
 					if(custom_type) {
 						custom_importer[custom_type](file_name, columns[file_name], total_timer).then(next, error);
 					} else {
-						gtfs_importer.import_type(agency.slug, import_type, file_name, columns[file_name], model_name).then(next, error);	
+						gtfs_importer.import_type({
+							agency_slug: agency.slug,
+							title: import_type,
+							file_name: file_name,
+							columns: columns[file_name],
+							model_name: model_name,
+							truncate: !no_truncate
+						}).then(next, error);
 					}
 				} else {
 					next();
@@ -71,7 +78,7 @@ agencies.where('slug = ?', [agency_arg]).first(function(agency) {
 
 		sequential
 			.add(add_type('Calendar', 'calendar', null, 'calendar_dates'))
-			.add(add_type('Calendar Exceptions', 'calendar_dates'))
+			.add(add_type('Calendar Exceptions', 'calendar_dates', null, null, true))
 			.add(add_type('Shapes', 'shapes'))
 			.add(add_type('Stops', 'stops'))
 			.add(add_type('Trips', 'trips'))
