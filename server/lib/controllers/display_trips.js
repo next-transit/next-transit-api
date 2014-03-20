@@ -56,7 +56,7 @@ ctrl.action('trips', function(req, res, success) {
 				from_id = parseInt(stops[0], 10),
 				to_id = parseInt(stops[1], 10);
 
-			display_trips.get_by_time(req.agency.id, route.is_rail, route.route_id, direction_id, from_id, offset, to_id, function(trips, count) {
+			display_trips.get_by_time(req.agency, route.is_rail, route.route_id, direction_id, from_id, offset, to_id, function(trips, count) {
 				success({
 					data: trips,
 					count: trips.length,

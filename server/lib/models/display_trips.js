@@ -83,9 +83,9 @@ trips.get_by_day = function(agency_id, is_rail, route_id, direction_id, from_id,
 	});
 };
 
-trips.get_by_time = function(agency_id, is_rail, route_id, direction_id, from_id, offset, to_id, success, error) {
-	stop_times.get_by_time(agency_id, is_rail, route_id, direction_id, from_id, offset, function(times) {
-		convert_list(agency_id, times, to_id, function(trips) {
+trips.get_by_time = function(agency, is_rail, route_id, direction_id, from_id, offset, to_id, success, error) {
+	stop_times.get_by_time(agency, is_rail, route_id, direction_id, from_id, offset, function(times) {
+		convert_list(agency.id, times, to_id, function(trips) {
 			success(trips);
 		});
 	}, error);

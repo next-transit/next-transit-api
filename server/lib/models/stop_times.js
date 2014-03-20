@@ -4,7 +4,7 @@ var date = require('../util/date'),
 
 var SERVICE_IDS_BUS = ['7', '1', '1', '1', '1', '1', '5'],
 	SERVICE_IDS_RAIL = ['S3', 'S1', 'S1', 'S1', 'S1', 'S1', 'S2'],
-	TIME_FORMAT = 'HH24:MI:SS',
+	TIME_FORMAT = '%H:%M:%S', // format for "timezone" library
 	DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
 function get_stops(agency_id, route_id, direction_id, from_id, day, date_str, compare_time, compare_dir, sort_dir, limit, offset) {
@@ -55,13 +55,13 @@ stop_times.get_by_day = function(agency_id, is_rail, route_id, direction_id, fro
 	});
 };
 
-stop_times.get_by_time = function(agency_id, is_rail, route_id, direction_id, from_id, offset, success, error) {
+stop_times.get_by_time = function(agency, is_rail, route_id, direction_id, from_id, offset, success, error) {
 	var now = date().add({ minutes:-5 }),
 		day = DAYS[now.getDay()],
 		date_str = now.toDateFormat(),
 		sort_dir = 'asc',
 		compare_dir = '>',
-		compare_time = now.toFormat(TIME_FORMAT),
+		compare_time = now.timezoneFormat(TIME_FORMAT, agency.timezone || 'America/New_York'),
 		limit = 5;
 
 	var hour = now.getHours();
@@ -81,7 +81,7 @@ stop_times.get_by_time = function(agency_id, is_rail, route_id, direction_id, fr
 		offset = Math.abs(offset);
 	}
 
-	get_stops(agency_id, route_id, direction_id, from_id, day, date_str, compare_time, compare_dir, sort_dir, limit, offset).then(success, error);
+	get_stops(agency.id, route_id, direction_id, from_id, day, date_str, compare_time, compare_dir, sort_dir, limit, offset).then(success, error);
 };
 
 module.exports = stop_times;

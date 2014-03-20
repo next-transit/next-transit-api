@@ -1,6 +1,9 @@
 var curry = require('curry'),
 	trim = require('trim'),
-	date_format = 'YYYY-MM-DD';
+	tz = require('timezone'),
+	tz_us = tz(require('timezone/America')),
+	date_format = 'YYYY-MM-DD',
+	tz_date = '';
 
 function dateFromTime(dt, time) {
 	var parts = time.split(':');
@@ -63,13 +66,14 @@ function time_period(period) {
 	return time_str;
 }
 
-function DateUtil(dt) {
+function DateUtil(dt, timezone) {
 	var self = this;
 	this.CLASS = 'DateUtil';
 	this._dt = dt || new Date();
 	this.getDay = function() { return this._dt.getDay(); };
 	this.getHours = function() { return this._dt.getHours(); };
 	this.toFormat = function(format) { return this._dt.toFormat(format); };
+	this.timezoneFormat = function(format, timezone) { return tz_us(this._dt, format, timezone); };
 	this.toDateFormat = function() { return this._dt.toFormat(date_format) };
 	this.add = function(toAdd) { this._dt.add(toAdd); return self; };
 	this.dateFromTime = curry(dateFromTime)(this._dt);
@@ -78,8 +82,8 @@ function DateUtil(dt) {
 	this.time_period = time_period;
 }
 
-function date(dt) {
-	return new DateUtil(dt);
+function date(dt, timezone) {
+	return new DateUtil(dt, timezone);
 }
 
 date.dateFromTime = dateFromTime;
