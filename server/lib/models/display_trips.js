@@ -1,8 +1,9 @@
 var promise = require('promise'),
-	date = require('../util/date'),
+	moment = require('moment-timezone'),
+	date_utils = require('../util/date'),
 	stop_times = require('./stop_times'),
-	machine_format = 'YYYY-MM-DD HH24:MI',
-	time_format = 'H:MI P';
+	machine_format = 'YYYY-MM-DD HH:mm',
+	time_format = 'h:mm a';
 
 function DisplayTrip(stop_time) {
 	stop_time = stop_time || {};
@@ -35,7 +36,7 @@ function add_to_stop_time(agency_id, now, trip, to_id) {
 			stop_times.query().where('agency_id = ? AND trip_id = ? AND stop_id = ?', [agency_id, trip.trip_id, to_id]).first(function(to_stop_time) {
 				if(to_stop_time) {
 					trip.arrival_stop_time = to_stop_time;
-					trip.arrival_time_formatted = now.dateFromTime(to_stop_time.departure_time).toFormat(time_format);
+					trip.arrival_time_formatted = date_utils.time_str_to_date(now, to_stop_time.departure_time).format(time_format);
 				}
 				resolve(trip);
 			});
@@ -45,25 +46,24 @@ function add_to_stop_time(agency_id, now, trip, to_id) {
 	});
 }
 
-function convert(agency_id, now, stop_time, to_id) {
-	var trip = new DisplayTrip(stop_time, now),
-		departure_datetime = now.dateFromTime(stop_time.departure_time),
-		diff = departure_datetime - now._dt;
+function convert(agency, now, stop_time, to_id) {
+	var trip = new DisplayTrip(stop_time),
+		departure_datetime = date_utils.time_str_to_date(now, stop_time.departure_time);
 
-	trip.departure_datetime = departure_datetime.toFormat(machine_format);
-	trip.departure_time_formatted = departure_datetime.toFormat(time_format);
-	trip.from_now = now.time_period(diff);
+	trip.departure_datetime = departure_datetime.format(machine_format);
+	trip.departure_time_formatted = departure_datetime.format(time_format);
+	trip.from_now = date_utils.from_now(departure_datetime, now);
 	trip.gone = trip.from_now === 'GONE';
 
-	return add_to_stop_time(agency_id, now, trip, to_id);
+	return add_to_stop_time(agency.id, now, trip, to_id);
 }
 
-function convert_list(agency_id, stop_times, to_id, callback) {
-	var now = date(), 
+function convert_list(agency, stop_times, to_id, callback) {
+	var now = moment().tz(agency.timezone || 'America/New_York'), 
 		promises = [];
 
 	stop_times.forEach(function(stop_time) {
-		promises.push(convert(agency_id, now, stop_time, to_id));
+		promises.push(convert(agency, now, stop_time, to_id));
 	});
 
 	promise.all(promises).done(function(trips) {
@@ -85,7 +85,7 @@ trips.get_by_day = function(agency_id, is_rail, route_id, direction_id, from_id,
 
 trips.get_by_time = function(agency, is_rail, route_id, direction_id, from_id, offset, to_id, success, error) {
 	stop_times.get_by_time(agency, is_rail, route_id, direction_id, from_id, offset, function(times) {
-		convert_list(agency.id, times, to_id, function(trips) {
+		convert_list(agency, times, to_id, function(trips) {
 			success(trips);
 		});
 	}, error);

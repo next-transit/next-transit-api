@@ -1,58 +1,66 @@
-var curry = require('curry'),
-	trim = require('trim'),
-	tz = require('timezone'),
-	tz_us = tz(require('timezone/America')),
-	date_format = 'YYYY-MM-DD',
-	tz_date = '';
+var trim = require('trim'),
+	moment = require('moment-timezone'),
+	date = {};
 
-function dateFromTime(dt, time) {
+date.DEFAULT_TIMEZONE = 'America/New_York';
+date.DATE_FORMAT = 'YYYY-MM-DD';
+date.TIME_FORMAT = 'HH:mm:ss';
+date.DAY_OF_WEEK_FORMAT = 'dddd';
+
+date.format = {};
+date.format.date = function(m) {
+	return m.format(date.DATE_FORMAT);
+};
+date.format.time = function(m) {
+	return m.format(date.TIME_FORMAT);
+};
+date.format.time_next_day = function(m, limit_hour) {
+	var hour = m.hour();
+	if(hour < limit_hour) {
+		return (hour + 24) + ':' + m.format('mm:ss');
+	}
+	return date.format.time(m);
+};
+date.format.day_of_week = function(m) {
+	return m.format(date.DAY_OF_WEEK_FORMAT);
+};
+
+// Takes "time" in string form and turns it into a Date using the current (supplied) date
+// Expects time in HH:MM format. Seconds will be ignored.
+// Returns a new Date or undefined if time value cannot be parsed.
+date.time_str_to_date = function(m, time) {
 	var parts = time.split(':');
 	if(parts.length > 1) {
 		var hours = parseInt(parts[0], 10),
 			minutes = parseInt(parts[1], 10);
 
-		var date = dt.clone();
-		date.clearTime();
-		date.add({ hours:hours, minutes:minutes });
-		return date;
+		var new_m = moment(m).hour(hours).minute(minutes);
+
+		if(new_m.isValid()) {
+			return new_m;
+		}
 	}
 }
 
-function formatTime(dt, time, format) {
-	return dateFromTime(dt, time).toFormat(format);
-}
-
-function normalize24HrTime(time) {
-	if(typeof time === 'string') {
-		time = trim(time);
-
-		var parts = time.split(':'),
-			hour = parseInt(parts[0], 10);
-
-		if(parts.length >= 2 && hour > 23) {
-			time = '0' + (hour - 24) + ':' + parts[1] + ':00';
-		}	
-	}
-	return time;
-}
-
-
-function time_period(period) {
+// Compares two dates and prints a "from now" text representation
+// Negative (past) comparisons will return "GONE"
+// Future comparisons less than 1 minute will return "< 1m"
+// Future comparisons greater than 1 minute will return the smallest units possible in "1w 1d 1h 1m" notation.
+date.from_now = function(departure_datetime, now) {
 	var interval_array = [{ label:'w', time:604800 }, { label:'d', time:86400 }, { label:'h', time:3600 }, { label:'m', time:60 }],
+		diff = (departure_datetime - now) / 1000,
 		time_str = '';
 
-	period = period / 1000; // convert to seconds
-
-	if(period < 0) {
+	if(diff < 0) {
 		time_str = 'GONE'
-	} else if(period < 60) {
+	} else if(diff < 60) {
 		time_str = '< 1m'
 	} else {
 		interval_array.forEach(function(interval) {
-			if(period >= interval.time) {
-				var time_val = Math.floor(period / interval.time);
+			if(diff >= interval.time) {
+				var time_val = Math.floor(diff / interval.time);
 				
-				period -= time_val * interval.time;
+				diff -= time_val * interval.time;
 
 				if(time_str) {
 					time_str += ' ';
@@ -66,29 +74,10 @@ function time_period(period) {
 	return time_str;
 }
 
-function DateUtil(dt, timezone) {
-	var self = this;
-	this.CLASS = 'DateUtil';
-	this._dt = dt || new Date();
-	this.getDay = function() { return this._dt.getDay(); };
-	this.getHours = function() { return this._dt.getHours(); };
-	this.toFormat = function(format) { return this._dt.toFormat(format); };
-	this.timezoneFormat = function(format, timezone) { return tz_us(this._dt, format, timezone); };
-	this.toDateFormat = function() { return this._dt.toFormat(date_format) };
-	this.add = function(toAdd) { this._dt.add(toAdd); return self; };
-	this.dateFromTime = curry(dateFromTime)(this._dt);
-	this.formatTime = curry(formatTime)(this._dt);
-	this.normalize24HrTime = normalize24HrTime;
-	this.time_period = time_period;
-}
-
-function date(dt, timezone) {
-	return new DateUtil(dt, timezone);
-}
-
-date.dateFromTime = dateFromTime;
-date.formatTime = formatTime;
-date.normalize24HrTime = normalize24HrTime;
-date.time_period = time_period;
+// Create a new "moment" object in the given timezone.
+// Falls back to US Eastern Time if nothing is provided.
+date.get_timezone_moment = function(timezone_str) {
+	return moment().tz(timezone_str || date.DEFAULT_TIMEZONE);
+};
 
 module.exports = date;
