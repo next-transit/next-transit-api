@@ -36,19 +36,35 @@ function get_stops(agency_id, route_id, direction_id, from_id, day_of_week, date
 	});
 };
 
-stop_times.get_by_day = function(agency_id, is_rail, route_id, direction_id, from_id, day_of_week) {
+stop_times.get_by_day = function(agency, is_rail, route_id, direction_id, from_id, day_of_week) {
 	return new promise(function(resolve, reject) {
+		var now = date.get_timezone_moment(agency.timezone),
+			date_str,
+			dow_string_idx,
+			dow_offset;
+
 		if(typeof day_of_week === 'string') {
-			var string_dow = DAYS.indexOf(day_of_week);
-			if(string_dow > -1) {
-				day_of_week = string_dow;
+			dow_string_idx = DAYS.indexOf(day_of_week);
+			if(dow_string_idx > -1) {
+				day_of_week = dow_string_idx;
 			}
 		}
 		if(typeof day_of_week !== 'number' || day_of_week < 0 || day_of_week > 6) {
-			day_of_week = (new Date()).getDay();
+			day_of_week = now.day();
 		}
 
-		get_stops(agency_id, route_id, direction_id, from_id, DAYS[day_of_week], date_str).then(resolve, reject);
+		// Sets formatted date string to closest relative to current date
+		// Needs to be an actual date and not just a day of the week because 
+		// GTFS calendar dates change throughout the year
+		// Maybe should always be "add"
+		if(day_of_week !== now.day()) {
+			dow_offset = day_of_week - now.day();
+			now = now.add('days', dow_offset);
+		}
+
+		date_str = date.format.date(now);
+
+		get_stops(agency.id, route_id, direction_id, from_id, DAYS[day_of_week], date_str).then(resolve, reject);
 	});
 };
 
