@@ -28,7 +28,7 @@ ctrl.action('index', function(req, res, success) {
 			day_of_week = req.query.day;
 		}
 
-		display_trips.get_by_day(req.agency.id, route.is_rail, route.route_id, direction_id, from_id, day_of_week).then(function(trips, count) {
+		display_trips.get_by_day(req.agency, route.is_rail, route.route_id, direction_id, from_id, day_of_week).then(function(trips, count) {
 			success({
 				data: trips,
 				count: trips.length,
