@@ -28,7 +28,7 @@ function import_path(importer, agency_slug, type, read_path, write_stream, model
 			date_str = new Date().toFormat('YYYY-MM-DD HH24:MI:SS');
 
 		csv()
-			.from(read_path, { columns:true, trim:true })
+			.from(read_path, { columns:true, trim:true, rowDelimiter:'\n' })
 			.to(write_stream, { delimiter:'\t', columns:columns })
 			.transform(function(record, idx) {
 				if(idx && (idx % batch_size === 0)) {
