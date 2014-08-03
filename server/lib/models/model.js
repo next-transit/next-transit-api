@@ -1,9 +1,11 @@
 var db = require('../db');
 
-function Model(table, public_fields) {
+function Model(table, public_fields, options) {
 	this.CLASS = 'Model';
 	this.table = table;
 	this.public_fields = public_fields || null;
+	this.options = options || {};
+	this.alias = this.options.alias || table.split('_').map(function(part) { return part[0] }).join('');
 }
 
 function execute_query(sql, params, success, error) {
@@ -29,8 +31,12 @@ function swap_params(sql, params) {
 	return sql;
 }
 
-function generate_sql(table, select, joins, where, params, group_bys, orders, limit, offset) {
+function generate_sql(table, select, joins, where, params, group_bys, orders, limit, offset, alias) {
 	var sql = 'SELECT ' + (select || '*') + ' FROM ' + table;
+
+	if(alias) {
+		sql += ' as '+ alias;
+	}
 
 	if(joins) {
 		sql += ' ' + joins.trim();
@@ -104,7 +110,7 @@ function generate_insert_sql(table, data, callback) {
 }
 
 function query_done(agency_id, model, q, first, callback, count, no_process) {
-	var sql = generate_sql(model.table, q.select, q.joins, q.where, q.params, q.group_by, q.orders, q.limit, q.offset);
+	var sql = generate_sql(model.table, q.select, q.joins, q.where, q.params, q.group_by, q.orders, q.limit, q.offset, q.alias);
 	execute_query(sql, q.params, function(results) {
 		if(results) {
 			results = first ? results[0] : results;
@@ -204,7 +210,7 @@ Model.prototype.where = function(where, params) {
 };
 
 Model.prototype.query = function(agency_id) {
-	var query = {}, model = this, joins = [], q = {};
+	var query = {}, model = this, joins = [], q = { alias:this.alias };
 
 	function fn(param) {
 		return function(val) {
@@ -213,6 +219,7 @@ Model.prototype.query = function(agency_id) {
 		};
 	}
 
+	query.alias = fn('alias');
 	query.select = fn('select');
 	query.params = fn('params');
 	query.orders = fn('orders');
