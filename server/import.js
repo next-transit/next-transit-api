@@ -84,9 +84,9 @@ agencies.where('slug = ?', [agency_arg]).first(function(agency) {
 			.add(add_type('Trips', 'trips'))
 			.add(add_type('Stop Times', 'stop_times'))
 			.add(add_type('Routes', 'routes'))
-			.add(add_type('Route Directions', 'directions', 'import_route_extras'))
 			.add(add_type('Route Shapes', 'simplified_shapes', 'import_route_shapes'))
 			.add(add_type('Simplified Stops', 'simplified_stops', 'import_simplified_stops'))
+			.add(add_type('Route Directions', 'directions', 'import_route_extras'))
 			.add(add_type('Trip Variants', 'trip_variants', 'import_trip_variants'))
 			.add(add_type('Stats', 'stats', 'generate_stats'))
 			.then(function() {
