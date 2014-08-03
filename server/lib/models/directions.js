@@ -1,5 +1,6 @@
 var promise = require('promise'),
 	routes = require('./routes'),
+	simplified_stops = require('./simplified_stops'),
 	directions = require('./model').create('route_directions'),
 	dir_names = {
 		NorthSouth: ['Southbound', 'Northbound'],
@@ -31,16 +32,13 @@ function get_stop_by_direction(agency_id, first, route, direction_id) {
 	return new promise(function(resolve, reject) {
 		var sort_dir = first ? '' : ' DESC';
 
-		routes.query()
+		simplified_stops.query()
 			.error(reject)
-			.select('s.stop_id, s.stop_name, st.stop_sequence, s.stop_lat, s.stop_lon')
-			.join('JOIN trips t ON t.route_id = routes.route_id AND t.agency_id = ?')
-			.join('LEFT OUTER JOIN stop_times st ON t.trip_id = st.trip_id AND st.agency_id = ?')
-			.join('LEFT OUTER JOIN stops s ON st.stop_id = s.stop_id AND s.agency_id = ?')
-			.where('routes.agency_id = ? AND routes.route_id = ? AND t.direction_id = ? AND st.id IS NOT NULL AND s.id IS NOT NULL', [
-				agency_id, agency_id, agency_id, agency_id, route.route_id, direction_id
+			.select('ss.stop_id, ss.stop_name, ss.stop_sequence, ss.stop_lat, ss.stop_lon')
+			.where('ss.agency_id = ? AND ss.route_id = ? AND ss.direction_id = ?', [
+				agency_id, route.route_id, direction_id
 			])
-			.orders('st.stop_sequence' + sort_dir)
+			.orders('ss.stop_sequence' + sort_dir)
 			.first(function(stop) {
 				resolve(stop);
 			}, true);

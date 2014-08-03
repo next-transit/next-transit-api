@@ -11,10 +11,10 @@ function get_stops(agency_id, route_id, direction_id, from_id, day_of_week, date
 		offset = offset || 0;
 
 		var q = stop_times.query()
-			.select('DISTINCT stop_times.*, t.block_id, tv.stop_count, tv.first_stop_sequence, tv.last_stop_sequence')
-			.join('JOIN trips t ON stop_times.trip_id = t.trip_id AND t.agency_id = ?')
+			.select('DISTINCT st.*, t.block_id, tv.stop_count, tv.first_stop_sequence, tv.last_stop_sequence')
+			.join('JOIN trips t ON st.trip_id = t.trip_id AND t.agency_id = ?')
 			.join('LEFT OUTER JOIN trip_variants tv ON t.trip_variant_id = tv.id')
-			.where('stop_times.agency_id = ? AND t.route_id = ? AND stop_id = ? AND t.direction_id = ?', [agency_id, agency_id, route_id, from_id, direction_id])
+			.where('st.agency_id = ? AND t.route_id = ? AND stop_id = ? AND t.direction_id = ?', [agency_id, agency_id, route_id, from_id, direction_id])
 			.where_if('service_id IN (SELECT service_id FROM calendar_dates WHERE agency_id = ? AND (exact_date = ? OR (' + day_of_week + ' = true AND start_date <= ? AND end_date > ?)))', [agency_id, date_str, date_str, date_str], date_str)
 			.where_if('service_id IN (SELECT service_id FROM calendar_dates WHERE agency_id = ? AND ' + day_of_week + ' = true', [], !date_str)
 			.where_if('departure_time ' + compare_dir + ' ?', [compare_time], compare_time)
