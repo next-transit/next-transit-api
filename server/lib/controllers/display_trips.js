@@ -20,21 +20,27 @@ ctrl.action('index', function(req, res, success) {
 		from_stop = req.from_stop;
 
 	get_route(req).then(function(route) {
-		var direction_id = parseInt(req.params.direction_id, 10),
-			from_id = parseInt(req.params.stop_id, 10),
-			day_of_week = parseInt(req.query.day, 10);
+		if(route) {
+			var direction_id = parseInt(req.params.direction_id, 10),
+				stops = req.params.stop_id.split('...'),
+				from_id = parseInt(stops[0], 10),
+				to_id = parseInt(stops[1], 10),
+				day_of_week = parseInt(req.query.day, 10);
 
-		if(day_of_week.toString() === 'NaN') {
-			day_of_week = req.query.day;
+			if(day_of_week.toString() === 'NaN') {
+				day_of_week = req.query.day;
+			}
+
+			display_trips.get_by_day(req.agency, route.is_rail, route.route_id, direction_id, from_id, to_id, day_of_week).then(function(trips, count) {
+				success({
+					data: trips,
+					count: trips.length,
+					total_count: count
+				});
+			}, res.internal_error);
+		} else {
+			res.error('Could not find route.', 404);
 		}
-
-		display_trips.get_by_day(req.agency, route.is_rail, route.route_id, direction_id, from_id, day_of_week).then(function(trips, count) {
-			success({
-				data: trips,
-				count: trips.length,
-				total_count: count
-			});
-		}, res.internal_error);
 	}, res.internal_error);
 });
 
