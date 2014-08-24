@@ -3,6 +3,8 @@ var fs = require('fs'),
 	promise = require('promise'),
 	date_utils = require('date-utils'),
 	timer = require('./timer'),
+	transforms = require('./transforms'),
+
 	routes = require('../models/routes'),
 	directions = require('../models/directions'),
 	shapes = require('../models/shapes'),
@@ -13,9 +15,10 @@ var fs = require('fs'),
 	stats = require('../models/stats'),
 	options;
 
-function write_data(data, write_path, columns, custom_timer) {
+function write_data(import_type, data, write_path, columns, custom_timer) {
 	return new promise(function(resolve, reject) {
 		var write_stream = fs.createWriteStream(write_path, { flags:'w' }),
+			transform = transforms.get_transform(import_type, options.agency.slug),
 			date_str = new Date().toFormat('YYYY-MM-DD HH24:MI:SS');
 
 		csv()
@@ -24,6 +27,7 @@ function write_data(data, write_path, columns, custom_timer) {
 			.transform(function(record, idx) {
 				record.created_at = record.updated_at = date_str;
 				record.agency_id = options.agency.id;
+				transform(record);
 				return record;
 			})
 			.on('end', function() {
@@ -52,7 +56,7 @@ function import_route_extras(file_name, columns, write_path, custom_timer) {
 	return new promise(function(resolve, reject) {
 		directions.generate_directions(options.agency.id).then(function(new_directions) {
 			custom_timer.interval('Time spent reading source file', true).start();
-			write_data(new_directions, write_path, columns, custom_timer).then(function(count) {
+			write_data(file_name, new_directions, write_path, columns, custom_timer).then(function(count) {
 				directions.import(options.agency.id, columns, write_path, resolve, reject);
 			}, reject);
 		}, reject);
@@ -63,7 +67,7 @@ function import_route_shapes(file_name, columns, write_path, custom_timer) {
 	return new promise(function(resolve, reject) {
 		simplified_shapes.generate_route_shapes(options.agency.id, options.verbose).then(function(new_shapes) {
 			custom_timer.interval('Time spent reading shapes from trips', true).start();
-			write_data(new_shapes, write_path, columns, custom_timer).then(function(count) {
+			write_data(file_name, new_shapes, write_path, columns, custom_timer).then(function(count) {
 				simplified_shapes.import(options.agency.id, columns, write_path, resolve, reject);
 			}, reject);
 		}, reject);
@@ -74,7 +78,7 @@ function import_simplified_stops(file_name, columns, write_path, custom_timer) {
 	return new promise(function(resolve, reject) {
 		simplified_stops.generate_stops(options.agency.id).then(function(new_simplified_stops) {
 			custom_timer.interval('Time spent reading source file', true).start();
-			write_data(new_simplified_stops, write_path, columns, custom_timer).then(function(count) {
+			write_data(file_name, new_simplified_stops, write_path, columns, custom_timer).then(function(count) {
 				simplified_stops.import(options.agency.id, columns, write_path, resolve, reject);
 			}, reject);
 		}, reject);
@@ -85,7 +89,7 @@ function import_trip_variants(file_name, columns, write_path, custom_timer) {
 	return new promise(function(resolve, reject) {
 		trip_variants.generate_variants(options.agency.id).then(function(new_trip_variants) {
 			custom_timer.interval('Time spent reading source file', true).start();
-			write_data(new_trip_variants, write_path, columns, custom_timer).then(function(count) {
+			write_data(file_name, new_trip_variants, write_path, columns, custom_timer).then(function(count) {
 				trip_variants.import(options.agency.id, columns, write_path, resolve, reject);
 			}, reject);
 		}, reject);

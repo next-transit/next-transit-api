@@ -1,4 +1,4 @@
-var noop = function(record) { return record; },
+var noop = function transforms_noop(record) { return record; },
 	transforms = {};
 
 transforms.stops = function(record) {
@@ -40,14 +40,19 @@ transforms.calendar_dates = function(record) {
 
 module.exports = {
 	get_transform: function(type, agency_slug) {
+		var custom_transform;
+
+		// Attempt to load agency-specific transform and run for type
+		try {
+			custom_transform = require('./agencies/' + agency_slug + '/transforms')[type] || noop;
+		} catch(e) {
+			custom_transform = noop;
+		}
+
 		return function (record) {
 			// Run standard transform if it exists for type.
 			(transforms[type] || noop)(record);
-
-			// Attempt to load agency-specific transform and run for type
-			try {
-				(require('./agencies/' + agency_slug + '/transforms')[type] || noop)(record);
-			} catch(e) { }
+			custom_transform(record);
 		};
 	}
 };
