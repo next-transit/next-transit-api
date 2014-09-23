@@ -19,6 +19,9 @@ transforms.stop_times = function(record) {
 		if(hr <= 3) {
 			time_parts[0] = hr + 24;
 			record.arrival_time = time_parts.join(':');
+		} else if(hr < 10) {
+			time_parts[0] = '0' + hr;
+			record.arrival_time = time_parts.join(':');
 		}
 	}
 	
@@ -27,6 +30,9 @@ transforms.stop_times = function(record) {
 		hr = parseInt(time_parts, 10);
 		if(hr <= 3) {
 			time_parts[0] = hr + 24;
+			record.departure_time = time_parts.join(':');
+		} else if(hr < 10) {
+			time_parts[0] = '0' + hr;
 			record.departure_time = time_parts.join(':');
 		}
 	}
