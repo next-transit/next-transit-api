@@ -11,7 +11,7 @@ function get_direction_name(route, first_stop, last_stop, direction_id) {
 	var direction_name = direction_id.toString();
 
 	if(route.is_rail) {
-		direction_name = direction_id === 0 ? 'Inbound' : 'Outbound';
+		direction_name = direction_id === 0 ? 'Outbound' : 'Inbound';
 	} else if(first_stop && last_stop) {
 		var delta_x = Math.abs(first_stop.stop_lon - last_stop.stop_lon),
 			delta_y = Math.abs(first_stop.stop_lat - last_stop.stop_lat),
