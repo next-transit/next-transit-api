@@ -1,6 +1,7 @@
 var package = require(__dirname + '/../../../package.json'),
+	models = require('../models'),
 	api_keys = require('../models/api_keys'),
-	agencies = require('../models/agencies');
+	agencies = models.agencies;
 
 function get_agency(req, success, error) {
 	if(req.api_key) {

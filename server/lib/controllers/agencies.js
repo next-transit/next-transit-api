@@ -1,17 +1,17 @@
 var promise = require('promise'),
 	ctrl = require('./controller').create('agencies'),
-	route_types = require('../models/route_types'),
-	agencies = require('../models/agencies');
+	models = require('../models.js'),
+	agencies = models.agencies;
 
 ctrl.action('index', function(req, res, callback) {
-	agencies.query()
-		.error(res.internal_error)
+	agencies.select()
 		.orders('agency_name')
 		.limit(ctrl.limit)
 		.count(true)
-		.done(function(results, count) {
+		.error(res.internal_error)
+		.all(function(results, count) {
 			callback({
-				data: agencies.public(results),
+				data: results,
 				count: results.length,
 				total_count: count
 			});
@@ -19,11 +19,12 @@ ctrl.action('index', function(req, res, callback) {
 });
 
 ctrl.action('item', function(req, res, callback) {
-	agencies.where('slug = ?', [req.params.agency_slug])
+	agencies.select()
+		.where('slug = ?', [req.params.agency_slug])
 		.error(res.internal_error)
 		.first(function(agency) {
 			if(agency) {
-				callback({ data:agencies.public(agency) });
+				callback({ data:agency });
 			} else {
 				res.error('Could not find agency ' + req.params.agency_slug, 404);
 			}
