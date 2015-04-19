@@ -1,6 +1,6 @@
 {
-  "name": "next-transit-server",
-  "description": "NEXT-Transit Server",
+  "name": "next-transit-api",
+  "description": "NEXT-Transit API Server",
   "version": "1.0.0",
   "private": true,
   "engines": {
