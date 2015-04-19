@@ -1,6 +1,7 @@
 .sass-cache
 .DS_Store
 bower_components
+node_modules
 config/local.json
 data/gtfs
 app/build
