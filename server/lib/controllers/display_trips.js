@@ -1,7 +1,6 @@
-var routes = require('../models/routes'),
-	directions = require('../models/directions'),
-	display_trips = require('../models/display_trips'),
-	ctrl = require('./controller').create('display_trips', true);
+const routes = require('../models/routes');
+const display_trips = require('../models/display_trips');
+const ctrl = require('./controller').create('display_trips', true);
 
 function get_route(req) {
 	return new Promise(function(resolve, reject) {

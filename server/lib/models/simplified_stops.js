@@ -1,9 +1,8 @@
-var routes = require('./routes'),
-	directions = require('./directions'),
-	stops = require('./stops'),
-	trips = require('./trips'),
-	stop_times = require('./stop_times'),
-	simplified_stops = require('./model').create('simplified_stops');
+const routes = require('./routes');
+const stops = require('./stops');
+const trips = require('./trips');
+const stop_times = require('./stop_times');
+const simplified_stops = require('./model').create('simplified_stops');
 
 function merge_arrays(arrays) {
 	var merged = [];
