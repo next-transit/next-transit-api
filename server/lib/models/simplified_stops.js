@@ -1,6 +1,5 @@
 var promise = require('promise'),
 	routes = require('./routes'),
-	directions = require('./directions'),
 	stops = require('./stops'),
 	trips = require('./trips'),
 	stop_times = require('./stop_times'),

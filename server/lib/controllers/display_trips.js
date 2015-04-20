@@ -1,6 +1,5 @@
 var promise = require('promise'),
 	routes = require('../models/routes'),
-	directions = require('../models/directions'),
 	display_trips = require('../models/display_trips'),
 	ctrl = require('./controller').create('display_trips', true);
 

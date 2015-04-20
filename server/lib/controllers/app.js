@@ -5,7 +5,8 @@ var package = require(__dirname + '/../../../package.json'),
 
 function get_agency(req, success, error) {
 	if(req.api_key) {
-		agencies.where('id = ?', [req.api_key.agency_id])
+		agencies.select()
+			.where('id = ?', [req.api_key.agency_id])
 			.first(function(agency) {
 				if(agency) {
 					req.agency = agency;
@@ -21,7 +22,9 @@ function get_agency(req, success, error) {
 
 function get_api_key(req, success, error) {
 	if(req.query.api_key) {
-		api_keys.where('key = ?', [req.query.api_key])
+		api_keys.select()
+			.where('key = ?', [req.query.api_key])
+			.process(false)
 			.error(function() {
 				error('Error getting api key.');
 			})
