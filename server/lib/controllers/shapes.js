@@ -1,16 +1,17 @@
 var promise = require('promise'),
 	ctrl = require('./controller').create('shapes', true),
-	routes = require('../models/routes'),
+	models = require('../models')
+	routes = models.routes,
 	simplified_shapes = require('../models/simplified_shapes'),
 	simplified_stops = require('../models/simplified_stops');
 
 function get_route_by_multi_id(agency_id, route_id) {
 	return new promise(function(resolve, reject) {
-		routes.query(agency_id)
-			.where('agency_id = ? AND (lower(route_id) = ? OR lower(route_short_name) = ?)', [agency_id, route_id.toLowerCase(), route_id.toLowerCase()])
+		routes.select(agency_id)
+			.where('(lower(route_id) = ? OR lower(route_short_name) = ?)', [route_id.toLowerCase(), route_id.toLowerCase()])
 			.error(reject)
 			.first(function(route) {
-				resolve(routes.public(route));
+				resolve(route);
 			});
 	});
 }
@@ -100,8 +101,7 @@ function get_shapes_for_routes(agency_id, route_results, bbox, include_stops) {
 			return;
 		}
 
-		var routes = [], 
-			promises = [];
+		var promises = [];
 
 		route_results.forEach(function(result) {
 			if(result.route_id) {
@@ -175,11 +175,11 @@ ctrl.action('bbox', { json:true }, function(req, res, callback) {
 			.limit(ctrl.limit)
 			.count(true)
 			.done(function(results, count) {
-				get_shapes_for_routes(req.agency.id, results, buffered_bbox, include_stops).then(function(routes) {
+				get_shapes_for_routes(req.agency.id, results, buffered_bbox, include_stops).then(function(route_results) {
 					callback({
 						bbox: buffered_bbox,
-						data: routes,
-						count: routes.count,
+						data: route_results,
+						count: route_results.count,
 						total_count: count
 					});
 				}, res.internal_error);

@@ -1,5 +1,6 @@
 var ctrl = require('./controller').create('stops', true),
-	routes = require('../models/routes'),
+	models = require('../models'),
+	routes = models.routes,
 	simplified_stops = require('../models/simplified_stops');
 
 ctrl.action('index', function(req, res, success) {
@@ -8,7 +9,8 @@ ctrl.action('index', function(req, res, success) {
 		min_sequence = (req.query.min_sequence || '');
 
 	routes
-		.where('agency_id = ? AND (lower(route_id) = ? OR lower(route_short_name) = ?)', [req.agency.id, route_id, route_id])
+		.select(req.agency.id)
+		.where('(lower(route_id) = ? OR lower(route_short_name) = ?)', [route_id, route_id])
 		.error(req.internal_error)
 		.first(function(route) {
 			if(route) {
@@ -41,7 +43,8 @@ ctrl.action('item', function(req, res, success) {
 		stop_id = (req.params.stop_id || '');
 
 	routes
-		.where('agency_id = ? AND (lower(route_id) = ? OR lower(route_short_name) = ?)', [req.agency.id, route_id, route_id])
+		.select(req.agency.id)
+		.where('(lower(route_id) = ? OR lower(route_short_name) = ?)', [route_id, route_id])
 		.error(req.internal_error)
 		.first(function(route) {
 			var query = simplified_stops.query().error(req.internal_error);

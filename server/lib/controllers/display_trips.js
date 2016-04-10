@@ -1,13 +1,14 @@
 var promise = require('promise'),
-	routes = require('../models/routes'),
-	display_trips = require('../models/display_trips'),
+	models = require('../models'),
+	routes = models.routes,
+	display_trips = models.display_trips,
 	ctrl = require('./controller').create('display_trips', true);
 
 function get_route(req) {
 	return new promise(function(resolve, reject) {
 		var route_id = (req.params.route_id || '').toLowerCase();
-		routes
-			.where('agency_id = ? AND (lower(route_id) = ? OR lower(route_short_name) = ?)', [req.agency.id, route_id, route_id])
+		routes.select(req.agency.id)
+			.where('(lower(route_id) = ? OR lower(route_short_name) = ?)', [route_id, route_id])
 			.error(reject)
 			.first(resolve);
 	});
@@ -61,13 +62,13 @@ ctrl.action('trips', function(req, res, success) {
 				from_id = parseInt(stops[0], 10),
 				to_id = parseInt(stops[1], 10);
 
-			display_trips.get_by_time(req.agency, route.is_rail, route.route_id, direction_id, from_id, offset, to_id, function(trips, count) {
+			display_trips.get_by_time(req.agency, route.is_rail, route.route_id, direction_id, from_id, offset, to_id).then(function(trips, count) {
 				success({
 					data: trips,
 					count: trips.length,
 					total_count: count
 				});
-			});
+			}, res.internal_error);
 		} else {
 			res.error('Could not find route.', 404);
 		}
