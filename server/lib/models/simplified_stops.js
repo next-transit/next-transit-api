@@ -1,5 +1,6 @@
 var promise = require('promise'),
-	routes = require('./routes'),
+	models = require('../models'),
+	routes = models.routes,
 	stops = require('./stops'),
 	trips = require('./trips'),
 	stop_times = require('./stop_times'),
@@ -67,11 +68,10 @@ function get_stops_for_route(agency_id, route) {
 
 simplified_stops.generate_stops = function(agency_id) {
 	return new promise(function(resolve, reject) {
-		routes.query()
-			.where('r.agency_id = ?', [agency_id])
+		routes.select(agency_id)
 			.orders('r.route_id')
 			.error(reject)
-			.done(function(routes) {
+			.all(function(routes) {
 				var promises = [];
 				// Get the simplified stops for each route
 				routes.forEach(function(route) {

@@ -10,7 +10,6 @@ var express = require('express'),
 	hbs = require('hbs'),
 	db = require('./lib/db'),
 	router = require('./lib/router'),
-	routes = require('./lib/models/routes'),
 	port = process.env.PORT || 5001;
 
 hbs.registerPartials('./app/templates/partials', function() {});
