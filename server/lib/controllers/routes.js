@@ -1,6 +1,6 @@
 var promise = require('promise'),
 	models = require('../models'),
-	route_types = require('../models/route_types'),
+	route_types = models.route_types,
 	routes = models.routes,
 	ctrl = require('./controller').create('route_types', true);
 
@@ -10,6 +10,7 @@ function get_route_type(req) {
 
 		if(route_type_slug) {
 			route_types
+				.select(req.agency.id)
 				.where('agency_id = ? AND slug = ?', [req.agency.id, route_type_slug])
 				.error(reject)
 				.first(resolve);
