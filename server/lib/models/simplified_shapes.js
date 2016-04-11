@@ -1,8 +1,10 @@
-var routes = require('./routes'),
-	trips = require('./trips'),
-	shapes = require('./shapes'),
-	simplified_shapes = require('./model').create('simplified_shapes'),
-	verbose = false;
+const models = require('../models');
+const trips = require('./trips');
+const shapes = require('./shapes');
+const simplified_shapes = require('./model').create('simplified_shapes');
+
+const routes = models.routes;
+const verbose = false;
 
 function get_longest_trip_shape(agency_id, route, direction_id) {
 	return new Promise(function(resolve, reject) {
@@ -57,9 +59,9 @@ simplified_shapes.generate_route_shapes = function(agency_id, vrbse) {
 		verbose = vrbse;
 
 		routes
-			.query(agency_id)
+			.select(agency_id)
 			.where('agency_id = ?', [agency_id])
-			.done(function(rts) {
+			.all(function(rts) {
 				var promises = [];
 				rts.forEach(function(route) {
 					promises.push(get_longest_trip_shapes(agency_id, route));
