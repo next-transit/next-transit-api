@@ -16,6 +16,7 @@ var app = express();
 app.set('view engine', 'hbs');
 app.set('views', './app/templates');
 
+app.use(cors());
 app.use(express.static('./app'));
 app.use(compression());
 app.use(cors());

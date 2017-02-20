@@ -1,5 +1,5 @@
 var ctrl = require('./controller').create('stops', true),
-	stops = require('../models/stops');
+	stops = require('../models').stops;
 
 ctrl.action('index', function(req, res, success) {
 	var route_id = (req.query.route_id || req.params.route_id || '').toLowerCase(),
@@ -16,15 +16,15 @@ ctrl.action('index', function(req, res, success) {
 	}
 
 	stops
-		.where('agency_id = ?', [req.agency.id])
+		.select(req.agency.id)
 		.where_if('stop_lon > ? AND stop_lon < ? AND stop_lat > ? AND stop_lat < ?', [left, right, bottom, top], bbox)
 		.orders('stop_name')
 		.limit(ctrl.limit)
 		.count(true)
 		.error(req.internal_error)
-		.done(function(results, count) {
+		.all(function(results, count) {
 			success({
-				stops: stops.public(results),
+				stops: results,
 				count: results.count,
 				total_count: count
 			});
@@ -36,13 +36,13 @@ ctrl.action('item', function(req, res, success) {
 		stop_id = (req.params.stop_id || '');
 
 	stops
-		.error(req.internal_error)
-		.where('agency_id = ?', [req.agency.id])
+		.select(req.agency.id)
 		.where_if('id = ?', [parseInt(id, 10) || 0], id)
 		.where_if('stop_id = ?', [parseInt(stop_id, 10) || 0], stop_id)
+		.error(req.internal_error)
 		.first(function(results) {
 			success({
-				stop: stops.public(results)
+				stop: results
 			});
 		});
 });
