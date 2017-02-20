@@ -2,8 +2,8 @@ var promise = require('promise'),
 	ctrl = require('./controller').create('shapes', true),
 	models = require('../models')
 	routes = models.routes,
-	simplified_shapes = require('../models/simplified_shapes'),
-	simplified_stops = require('../models/simplified_stops');
+	simplified_shapes = models.simplified_shapes,
+	simplified_stops = models.simplified_stops;
 
 function get_route_by_multi_id(agency_id, route_id) {
 	return new promise(function(resolve, reject) {
@@ -26,12 +26,13 @@ function get_simplified_stops_by_route(agency_id, route, bbox, include_stops) {
 				bbox_array = [bbox.west, bbox.south, bbox.east, bbox.north];
 			}
 
-			simplified_stops.query()
-				.where('agency_id = ? AND route_id = ?', [agency_id, route.route_id])
+			simplified_stops
+				.select(agency_id)
+				.where('route_id = ?', [route.route_id])
 				.where_if('stop_lon > ? AND stop_lat > ? AND stop_lon < ? AND stop_lat < ?', bbox_array, bbox)
 				.orders('direction_id, stop_sequence')
 				.error(reject)
-				.done(function(stops) {
+				.all(function(stops) {
 					stops.forEach(function(stop) {
 						stop.stop_lat = parseFloat(stop.stop_lat);
 						stop.stop_lon = parseFloat(stop.stop_lon);
@@ -49,11 +50,12 @@ function get_simplified_shape_by_route(agency_id, route, bbox) {
 			bbox_array = [bbox.west, bbox.south, bbox.east, bbox.north];
 		}
 
-		simplified_shapes.query()
+		simplified_shapes
+			.select()
 			.where('agency_id = ? AND route_id = ?', [agency_id, route.route_id])
 			.where_if('shape_pt_lon > ? AND shape_pt_lat > ? AND shape_pt_lon < ? AND shape_pt_lat < ?', bbox_array, bbox)
 			.orders('segment_id, id')
-			.done(function(points) {
+			.all(function(points) {
 				var segments = {};
 
 				points.forEach(function(point) {
@@ -168,13 +170,14 @@ ctrl.action('bbox', { json:true }, function(req, res, callback) {
 			buffered_bbox = get_buffered_bbox(bbox, 20),
 			include_stops = req.query.stops !== 'false';
 
-		simplified_shapes.query()
+		simplified_shapes
 			.select('distinct route_id')
 			.where('agency_id = ?', [req.agency.id])
 			.where_if('shape_pt_lon > ? AND shape_pt_lat > ? AND shape_pt_lon < ? AND shape_pt_lat < ?', bbox_array, true)
 			.limit(ctrl.limit)
 			.count(true)
-			.done(function(results, count) {
+			.all(function(results, count) {
+				console.log('shapes results', results)
 				get_shapes_for_routes(req.agency.id, results, buffered_bbox, include_stops).then(function(route_results) {
 					callback({
 						bbox: buffered_bbox,

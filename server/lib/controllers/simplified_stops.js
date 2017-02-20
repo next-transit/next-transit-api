@@ -1,7 +1,7 @@
 var ctrl = require('./controller').create('stops', true),
 	models = require('../models'),
 	routes = models.routes,
-	simplified_stops = require('../models/simplified_stops');
+	simplified_stops = models.simplified_stops;
 
 ctrl.action('index', function(req, res, success) {
 	var route_id = (req.query.route_id || req.params.route_id || '').toLowerCase(),
@@ -15,7 +15,7 @@ ctrl.action('index', function(req, res, success) {
 		.first(function(route) {
 			if(route) {
 				simplified_stops
-					.where('agency_id = ?', [req.agency.id])
+					.select(req.agency.id)
 					.where_if('route_id = ?', [route.route_id], route)
 					.where_if('direction_id = ?', [parseInt(direction_id, 10)], direction_id)
 					.where_if('stop_sequence > ?', [parseInt(min_sequence, 10)], min_sequence)
@@ -23,9 +23,9 @@ ctrl.action('index', function(req, res, success) {
 					.limit(ctrl.limit)
 					.count(true)
 					.error(req.internal_error)
-					.done(function(results, count) {
+					.all(function(results, count) {
 						success({
-							data: simplified_stops.public(results),
+							data: results,
 							count: results.count,
 							total_count: count
 						});
@@ -47,14 +47,14 @@ ctrl.action('item', function(req, res, success) {
 		.where('(lower(route_id) = ? OR lower(route_short_name) = ?)', [route_id, route_id])
 		.error(req.internal_error)
 		.first(function(route) {
-			var query = simplified_stops.query().error(req.internal_error);
+			var query = simplified_stops.select(req.agency.id).error(req.internal_error);
 
 			if(id) {
-				query.where('agency_id = ? AND id = ?', [req.agency.id, parseInt(id, 10)]);
+				query.where('id = ?', [parseInt(id, 10)]);
 			} else {
 				direction_id = parseInt(direction_id, 10);
 				stop_id = parseInt(stop_id, 10);
-				query.where('agency_id = ? AND route_id = ? AND direction_id = ? AND stop_id = ?', [req.agency.id, route.route_id, direction_id, stop_id]);
+				query.where('route_id = ? AND direction_id = ? AND stop_id = ?', [route.route_id, direction_id, stop_id]);
 			}
 
 			query.first(function(results) {

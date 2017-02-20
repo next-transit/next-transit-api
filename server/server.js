@@ -1,4 +1,4 @@
-require('newrelic');
+// require('newrelic');
 
 if(process.env.NODETIME_ACCOUNT_KEY) {
 	require('nodetime').profile({ accountKey:process.env.NODETIME_ACCOUNT_KEY, appName:'nexttransit-api' });
@@ -7,6 +7,7 @@ if(process.env.NODETIME_ACCOUNT_KEY) {
 require('date-utils');
 
 var express = require('express'),
+  cors = require('cors'),
 	hbs = require('hbs'),
 	db = require('./lib/db'),
 	router = require('./lib/router'),
@@ -19,6 +20,7 @@ var app = express();
 app.set('view engine', 'hbs');
 app.set('views', './app/templates');
 
+app.use(cors());
 app.use(express.static('./app'));
 app.use(express.compress());
 
