@@ -33,6 +33,8 @@
 	"get /shapes": { "action":"shapes:bbox" },
 	"get /routes/:route_id/shapes": { "action":"shapes" },
 
+	"get /route_types/:route_type/routes/:route_id/vehicles": { "action":"vehicles" },
+
 	"get /stats": { "action":"stats" },
 
 	"get /version": { "action":"version" },
