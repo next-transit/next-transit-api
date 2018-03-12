@@ -8,6 +8,6 @@ if(fs.existsSync(__dirname + '/../../../config/local.json')) {
 
 config.verbose = process.env.VERBOSE || local.verbose;
 config.debug_assets = process.env.DEBUG_ASSETS || local.debug_assets;
-config.database_url = process.env.HEROKU_POSTGRESQL_YELLOW_URL || process.env.DATABASE_URL || local.database_url;
+config.database_url = process.env.DATABASE_URL || local.database_url;
 
 module.exports = config;
