@@ -39,7 +39,7 @@ function normalize(routeTypeId, data) {
   return vehicles;
 }
 
-trimet.get_vehicles = function(routeTypeId, routeId) {
+trimet.get_vehicles = function(agencyId, routeTypeId, routeId) {
   return new promise(function(resolve, reject) {
     request(get_request_url(routeId)).then(function(data) {
       resolve(normalize(routeTypeId, data));
