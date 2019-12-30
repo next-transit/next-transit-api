@@ -1,5 +1,4 @@
-var promise = require('promise'),
-	model = require('./model'),
+var model = require('./model'),
 	routes = model.create('routes'),
 	route_types = require('./route_types');
 
@@ -15,7 +14,7 @@ function pad_left(str, size, char) {
 }
 
 function process_route(route) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		if(route) {
 			var custom_type_slug = route.route_short_name.toLowerCase();
 
@@ -58,7 +57,7 @@ routes.process = function(agency_id, data, callback) {
 		data.forEach(function(route) {
 			promises.push(process_route(route));
 		});
-		promise.all(promises).then(callback, function(err) {
+		Promise.all(promises).then(callback, function(err) {
 			console.log('Error processing routes', err);
 		});
 	} else if(data) {

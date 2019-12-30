@@ -1,6 +1,4 @@
-var promise = require('promise'),
-	routes = require('./routes'),
-	simplified_stops = require('./simplified_stops'),
+var simplified_stops = require('./simplified_stops'),
 	directions = require('./model').create('route_directions'),
 	dir_names = {
 		NorthSouth: ['Southbound', 'Northbound'],
@@ -29,7 +27,7 @@ function get_direction_name(route, first_stop, last_stop, direction_id) {
 }
 
 function get_stop_by_direction(agency_id, first, route, direction_id) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		var sort_dir = first ? '' : ' DESC';
 
 		simplified_stops.query()
@@ -46,8 +44,8 @@ function get_stop_by_direction(agency_id, first, route, direction_id) {
 }
 
 function get_route_direction(agency_id, route, direction_id) {
-	return new promise(function (resolve, reject) {
-		promise.all([
+	return new Promise(function (resolve, reject) {
+		Promise.all([
 			get_stop_by_direction(agency_id, true, route, direction_id),
 			get_stop_by_direction(agency_id, false, route, direction_id)
 		]).then(function(stops) {
@@ -66,8 +64,8 @@ function get_route_direction(agency_id, route, direction_id) {
 }
 
 function get_directions_from_route(agency_id, route) {
-	return new promise(function(resolve, reject) {
-		promise.all([
+	return new Promise(function(resolve, reject) {
+		Promise.all([
 			get_route_direction(agency_id, route, 0),
 			get_route_direction(agency_id, route, 1)
 		]).then(function(first, second) {
@@ -77,7 +75,7 @@ function get_directions_from_route(agency_id, route) {
 }
 
 directions.generate_directions = function(agency_id) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		routes
 			.query(agency_id)
 			.where('agency_id = ?', [agency_id])
@@ -87,7 +85,7 @@ directions.generate_directions = function(agency_id) {
 				rts.forEach(function(route) {
 					promises.push(get_directions_from_route(agency_id, route));
 				});
-				promise.all(promises).then(function(results) {
+				Promise.all(promises).then(function(results) {
 					var new_directions = [];
 					results.forEach(function(result) {
 						new_directions.push(result[0]);

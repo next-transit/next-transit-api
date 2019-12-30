@@ -1,11 +1,10 @@
-var promise = require('promise'),
-	date = require('../util/date.js'),
+var date = require('../util/date.js'),
 	stop_times = require('./model').create('stop_times');
 
 var DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
 function get_stops(agency_id, route_id, direction_id, from_id, day_of_week, date_str, compare_time, compare_dir, sort_dir, limit, offset) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		sort_dir = sort_dir || 'asc';
 		limit = limit || 0;
 		offset = offset || 0;
@@ -37,7 +36,7 @@ function get_stops(agency_id, route_id, direction_id, from_id, day_of_week, date
 };
 
 stop_times.get_by_day = function(agency, is_rail, route_id, direction_id, from_id, day_of_week) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		var now = date.get_timezone_moment(agency.timezone),
 			date_str,
 			dow_string_idx,

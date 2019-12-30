@@ -1,14 +1,12 @@
-var promise = require('promise');
-
 // A helper for Array iterations on promises
 function promise_each(items, iterator) {
 	var all = [];
 
 	items.forEach(function(item) {
-		all.push(new promise(function(resolve, reject) { iterator(item, resolve, reject); }));
+		all.push(new Promise(function(resolve, reject) { iterator(item, resolve, reject); }));
 	});
 
-	return promise.all(all);
+	return Promise.all(all);
 }
 
 module.exports = {

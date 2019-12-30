@@ -1,6 +1,5 @@
 var fs = require('fs'),
 	csv = require('csv'),
-	promise = require('promise'),
 	date_utils = require('date-utils'),
 	timer = require('./timer'),
 	transforms = require('./transforms'),
@@ -16,7 +15,7 @@ var fs = require('fs'),
 	options;
 
 function write_data(import_type, data, write_path, columns, custom_timer) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		var write_stream = fs.createWriteStream(write_path, { flags:'w' }),
 			transform = transforms.get_transform(import_type, options.agency.slug),
 			date_str = new Date().toFormat('YYYY-MM-DD HH24:MI:SS');
@@ -43,7 +42,7 @@ function write_data(import_type, data, write_path, columns, custom_timer) {
 }
 
 function import_custom(title, process, file_name, columns, total_timer) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		var custom_timer = timer('\n' + title, true),
 			write_path = options.stage_path + '/' + file_name + '.txt',
 			extended_columns = (columns || []).concat(['created_at', 'updated_at', 'agency_id']);
@@ -53,7 +52,7 @@ function import_custom(title, process, file_name, columns, total_timer) {
 }
 
 function import_route_extras(file_name, columns, write_path, custom_timer) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		directions.generate_directions(options.agency.id).then(function(new_directions) {
 			custom_timer.interval('Time spent reading source file', true).start();
 			write_data(file_name, new_directions, write_path, columns, custom_timer).then(function(count) {
@@ -64,7 +63,7 @@ function import_route_extras(file_name, columns, write_path, custom_timer) {
 }
 
 function import_route_shapes(file_name, columns, write_path, custom_timer) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		simplified_shapes.generate_route_shapes(options.agency.id, options.verbose).then(function(new_shapes) {
 			custom_timer.interval('Time spent reading shapes from trips', true).start();
 			write_data(file_name, new_shapes, write_path, columns, custom_timer).then(function(count) {
@@ -75,7 +74,7 @@ function import_route_shapes(file_name, columns, write_path, custom_timer) {
 }
 
 function import_simplified_stops(file_name, columns, write_path, custom_timer) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		simplified_stops.generate_stops(options.agency.id).then(function(new_simplified_stops) {
 			custom_timer.interval('Time spent reading source file', true).start();
 			write_data(file_name, new_simplified_stops, write_path, columns, custom_timer).then(function(count) {
@@ -86,7 +85,7 @@ function import_simplified_stops(file_name, columns, write_path, custom_timer) {
 }
 
 function import_trip_variants(file_name, columns, write_path, custom_timer) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		trip_variants.generate_variants(options.agency.id).then(function(new_trip_variants) {
 			custom_timer.interval('Time spent reading source file', true).start();
 			write_data(file_name, new_trip_variants, write_path, columns, custom_timer).then(function(count) {
@@ -97,7 +96,7 @@ function import_trip_variants(file_name, columns, write_path, custom_timer) {
 }
 
 function generate_stats(file_name, columns, write_path, custom_timer, total_timer) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		var models = ['shapes', 'stops', 'routes', 'directions', 'simplified_stops', 'trips', 'trip_variants', 'stop_times', 'simplified_shapes'],
 			promises = [],
 			get_model_count = function get_model_count(model_name) {

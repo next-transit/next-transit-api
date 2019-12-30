@@ -1,5 +1,4 @@
-var promise = require('promise'),
-	moment = require('moment-timezone'),
+var moment = require('moment-timezone'),
 	date_utils = require('../util/date'),
 	stop_times = require('./stop_times'),
 	machine_format = 'YYYY-MM-DD HH:mm',
@@ -31,7 +30,7 @@ function DisplayTrip(stop_time) {
 }
 
 function add_to_stop_time(agency_id, now, trip, to_id) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		if(to_id) {
 			stop_times.query().where('agency_id = ? AND trip_id = ? AND stop_id = ?', [agency_id, trip.trip_id, to_id]).first(function(to_stop_time) {
 				if(to_stop_time) {
@@ -66,7 +65,7 @@ function convert_list(agency, stop_times, to_id, callback) {
 		promises.push(convert(agency, now, stop_time, to_id));
 	});
 
-	promise.all(promises).done(function(trips) {
+	Promise.all(promises).then(function(trips) {
 		callback(trips);
 	});
 }
@@ -74,7 +73,7 @@ function convert_list(agency, stop_times, to_id, callback) {
 var trips = {};
 
 trips.get_by_day = function(agency_id, is_rail, route_id, direction_id, from_id, to_id, day_of_week) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		stop_times.get_by_day(agency_id, is_rail, route_id, direction_id, from_id, day_of_week).then(function(times, count) {
 			convert_list(agency_id, times, to_id, function(trips) {
 				resolve(trips, count);

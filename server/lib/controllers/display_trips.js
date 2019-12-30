@@ -1,11 +1,10 @@
-var promise = require('promise'),
-	routes = require('../models/routes'),
+var routes = require('../models/routes'),
 	directions = require('../models/directions'),
 	display_trips = require('../models/display_trips'),
 	ctrl = require('./controller').create('display_trips', true);
 
 function get_route(req) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		var route_id = (req.params.route_id || '').toLowerCase();
 		routes
 			.where('agency_id = ? AND (lower(route_id) = ? OR lower(route_short_name) = ?)', [req.agency.id, route_id, route_id])

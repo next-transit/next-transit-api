@@ -1,5 +1,4 @@
-var fs = require('fs'),
-	promise = require('promise'),
+var promise = require('promise'),
 	csv = require('csv'),
 	trim = require('trim'),
 	extend = require('extend'),
@@ -11,7 +10,7 @@ var fs = require('fs'),
 	batch_size = 100000;
 
 function copy_to_database(importer, options) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		options = extend({ write_path:'', model:null, columns:[] }, options);
 
 		var import_fn = options.truncate ? 'import' : 'import_only';
@@ -23,7 +22,7 @@ function copy_to_database(importer, options) {
 }
 
 function import_path(importer, agency_slug, type, read_path, write_stream, model, columns) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		var transform = transforms.get_transform(type, agency_slug),
 			date_str = new Date().toFormat('YYYY-MM-DD HH24:MI:SS');
 
@@ -81,7 +80,7 @@ function Importer(opts) {
 Importer.prototype.import_type = function(options) {
 	var self = this;
 
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		import_options = extend({
 			agency_slug: '',
 			title: '',

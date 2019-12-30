@@ -1,10 +1,9 @@
-var promise = require('promise'),
-	ctrl = require('./controller').create('route_types', true),
+var ctrl = require('./controller').create('route_types', true),
 	route_types = require('../models/route_types'),
 	routes = require('../models/routes');
 
 function get_route_type(req) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		var route_type_slug = (req.query.route_type || req.params.route_type || '').toLowerCase();
 
 		if(route_type_slug) {

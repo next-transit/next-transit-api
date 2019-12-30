@@ -1,11 +1,10 @@
-var promise = require('promise'),
-	ctrl = require('./controller').create('shapes', true),
+var ctrl = require('./controller').create('shapes', true),
 	routes = require('../models/routes'),
 	simplified_shapes = require('../models/simplified_shapes'),
 	simplified_stops = require('../models/simplified_stops');
 
 function get_route_by_multi_id(agency_id, route_id) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		routes.query(agency_id)
 			.where('agency_id = ? AND (lower(route_id) = ? OR lower(route_short_name) = ?)', [agency_id, route_id.toLowerCase(), route_id.toLowerCase()])
 			.error(reject)
@@ -16,7 +15,7 @@ function get_route_by_multi_id(agency_id, route_id) {
 }
 
 function get_simplified_stops_by_route(agency_id, route, bbox, include_stops) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		if(!include_stops) {
 			resolve([]);
 		} else {
@@ -42,7 +41,7 @@ function get_simplified_stops_by_route(agency_id, route, bbox, include_stops) {
 }
 
 function get_simplified_shape_by_route(agency_id, route, bbox) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		var bbox_array = [];
 		if(bbox) {
 			bbox_array = [bbox.west, bbox.south, bbox.east, bbox.north];
@@ -75,13 +74,13 @@ function get_simplified_shape_by_route(agency_id, route, bbox) {
 }
 
 function get_paths_and_stops_for_route(agency_id, route_id, bbox, include_stops) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		get_route_by_multi_id(agency_id, route_id).then(function(route) {
 			if(route) {
-				promise.all([
+				Promise.all([
 					get_simplified_shape_by_route(agency_id, route, bbox),
 					get_simplified_stops_by_route(agency_id, route, bbox, include_stops)
-				]).done(function(results) {
+				]).then(function(results) {
 					route.paths = results[0];
 					route.stops = results[1];
 					resolve(route);
@@ -94,7 +93,7 @@ function get_paths_and_stops_for_route(agency_id, route_id, bbox, include_stops)
 }
 
 function get_shapes_for_routes(agency_id, route_results, bbox, include_stops) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		if(!route_results || !route_results.length) {
 			resolve([]);
 			return;
@@ -109,7 +108,7 @@ function get_shapes_for_routes(agency_id, route_results, bbox, include_stops) {
 			}
 		});
 
-		promise.all(promises).done(resolve);
+		Promise.all(promises).then(resolve);
 	});
 }
 
@@ -144,10 +143,10 @@ ctrl.action('index', { json:true }, function(req, res, callback) {
 
 		get_route_by_multi_id(req.agency.id, route_id).then(function(route) {
 			if(route) {
-				promise.all([
+				Promise.all([
 					get_simplified_shape_by_route(req.agency.id, route, null),
 					get_simplified_stops_by_route(req.agency.id, route, null, true)
-				]).done(function(results) {
+				]).then(function(results) {
 					route.paths = results[0];
 					route.stops = results[1];
 					callback({ data:route });

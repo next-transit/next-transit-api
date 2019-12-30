@@ -1,12 +1,11 @@
-var promise = require('promise'),
-	routes = require('./routes'),
+var routes = require('./routes'),
 	trips = require('./trips'),
 	shapes = require('./shapes'),
 	simplified_shapes = require('./model').create('simplified_shapes'),
 	verbose = false;
 
 function get_longest_trip_shape(agency_id, route, direction_id) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		trips.get_longest_trip(agency_id, route.route_id, direction_id, function(longest_trip) {
 			if(longest_trip) {
 				if(verbose) {
@@ -41,12 +40,12 @@ function get_longest_trip_shape(agency_id, route, direction_id) {
 }
 
 function get_longest_trip_shapes(agency_id, route) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		var trip_promises = [
 			get_longest_trip_shape(agency_id, route, 0),
 			get_longest_trip_shape(agency_id, route, 1)
 		];
-		promise.all(trip_promises).then(function(trip_shapes) {
+		Promise.all(trip_promises).then(function(trip_shapes) {
 			var all_shapes = trip_shapes[0].concat(trip_shapes[1]);
 			resolve(all_shapes);
 		}, reject);
@@ -54,7 +53,7 @@ function get_longest_trip_shapes(agency_id, route) {
 }
 
 simplified_shapes.generate_route_shapes = function(agency_id, vrbse) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		verbose = vrbse;
 
 		routes
@@ -65,7 +64,7 @@ simplified_shapes.generate_route_shapes = function(agency_id, vrbse) {
 				rts.forEach(function(route) {
 					promises.push(get_longest_trip_shapes(agency_id, route));
 				});
-				promise.all(promises).then(function(route_shapes) {
+				Promise.all(promises).then(function(route_shapes) {
 					var all_shapes = [];
 					route_shapes.forEach(function(route_shape) {
 						all_shapes = all_shapes.concat(route_shape);

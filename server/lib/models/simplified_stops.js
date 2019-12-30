@@ -1,5 +1,4 @@
-var promise = require('promise'),
-	routes = require('./routes'),
+var routes = require('./routes'),
 	directions = require('./directions'),
 	stops = require('./stops'),
 	trips = require('./trips'),
@@ -34,7 +33,7 @@ function stop_results_to_simplified_stops(agency_id, route_id, direction_id, sto
 }
 
 function get_stops_for_direction(agency_id, route_id, direction_id) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		trips.get_longest_trip(agency_id, route_id, direction_id, function(longest_trip) {
 			if(longest_trip) {
 				stop_times.query()
@@ -53,12 +52,12 @@ function get_stops_for_direction(agency_id, route_id, direction_id) {
 }
 
 function get_stops_for_route(agency_id, route) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		var promises = [];
 		[0, 1].forEach(function(direction_id) {
 			promises.push(get_stops_for_direction(agency_id, route.route_id, direction_id));
 		});
-		promise.all(promises).then(function(direction_stops) {
+		Promise.all(promises).then(function(direction_stops) {
 			// Merge down directions to single array for route
 			var merged = merge_arrays(direction_stops);
 			resolve(merged);
@@ -67,7 +66,7 @@ function get_stops_for_route(agency_id, route) {
 }
 
 simplified_stops.generate_stops = function(agency_id) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		routes.query()
 			.where('r.agency_id = ?', [agency_id])
 			.orders('r.route_id')
@@ -78,7 +77,7 @@ simplified_stops.generate_stops = function(agency_id) {
 				routes.forEach(function(route) {
 					promises.push(get_stops_for_route(agency_id, route));
 				});
-				promise.all(promises).then(function(route_stops) {
+				Promise.all(promises).then(function(route_stops) {
 					// Merge down routes to single array of all stops
 					var merged = merge_arrays(route_stops);
 					resolve(merged);

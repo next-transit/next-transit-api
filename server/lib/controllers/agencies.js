@@ -1,5 +1,4 @@
-var promise = require('promise'),
-	ctrl = require('./controller').create('agencies'),
+var ctrl = require('./controller').create('agencies'),
 	route_types = require('../models/route_types'),
 	agencies = require('../models/agencies');
 

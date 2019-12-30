@@ -1,17 +1,14 @@
-// require('newrelic');
-
-if(process.env.NODETIME_ACCOUNT_KEY) {
-	require('nodetime').profile({ accountKey:process.env.NODETIME_ACCOUNT_KEY, appName:'nexttransit-api' });
-}
-
 require('date-utils');
 
-var express = require('express'),
-	hbs = require('hbs'),
-	db = require('./lib/db'),
-	router = require('./lib/router'),
-	routes = require('./lib/models/routes'),
-	port = process.env.PORT || 5001;
+var express = require('express');
+var hbs = require('hbs');
+var compression = require('compression');
+var cors = require('cors');
+
+var db = require('./lib/db');
+var router = require('./lib/router');
+var routes = require('./lib/models/routes');
+var port = process.env.PORT || 5001;
 
 hbs.registerPartials('./app/templates/partials', function() {});
 
@@ -21,7 +18,8 @@ app.set('view engine', 'hbs');
 app.set('views', './app/templates');
 
 app.use(express.static('./app'));
-app.use(express.compress());
+app.use(compression());
+app.use(cors());
 
 router.routes(app);
 

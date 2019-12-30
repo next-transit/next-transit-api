@@ -1,5 +1,4 @@
-var promise = require('promise'),
-	trips = require('./trips'),
+var trips = require('./trips'),
 	stop_times = require('./stop_times'),
 	simplified_stops = require('./simplified_stops'),
 	trip_variants = require('./model').create('trip_variants'),
@@ -8,7 +7,7 @@ var promise = require('promise'),
 	trip_variant_lookup = {};
 
 function get_variant_name(trip, stop_info) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		var direction_key = [trip.route_id, trip.direction_id].join('-'),
 			trip_key = [trip.route_id, trip.direction_id, stop_info.min_sequence, stop_info.max_sequence].join('-'),
 			index = 0,
@@ -30,7 +29,7 @@ function get_variant_name(trip, stop_info) {
 }
 
 function get_stop_count(agency_id, trip) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		simplified_stops.query()
 			.select('count(*) as stop_count')
 			.where('agency_id = ? AND route_id = ? AND direction_id = ?', [agency_id, trip.route_id, trip.direction_id])
@@ -42,7 +41,7 @@ function get_stop_count(agency_id, trip) {
 }
 
 function get_trip_variant(agency_id, trip) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		stop_times.query()
 			.select('MIN(stop_sequence) as min_sequence, MAX(stop_sequence) as max_sequence')
 			.where('agency_id = ? AND trip_id = ?', [agency_id, trip.trip_id])
@@ -76,14 +75,14 @@ function get_trip_variant(agency_id, trip) {
 }
 
 trip_variants.generate_variants = function(agency_id) {
-	return new promise(function(resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		variant_count_lookup = {};
 		trips.where('agency_id = ?', [agency_id]).done(function(results) {
 			var promises = [];
 			results.forEach(function(trip) {
 				promises.push(get_trip_variant(agency_id, trip));
 			});
-			promise.all(promises).then(function(variants) {
+			Promise.all(promises).then(function(variants) {
 				variants = variants.filter(function(variant) { return !!variant; });
 				resolve(variants);
 			}, function(err) {
