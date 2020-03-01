@@ -1,7 +1,7 @@
 {
   "name": "next-transit-api",
   "description": "NEXT-Transit API Server",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "private": true,
   "engines": {
     "node": "13.9.0"
