@@ -3,7 +3,7 @@ function promise_each(items, iterator) {
 	var all = [];
 
 	items.forEach(function(item) {
-		all.push(new Promise(function(resolve, reject) { iterator(item, resolve, reject); }));
+		all.push(new Promise((resolve, reject) => { iterator(item, resolve, reject); }));
 	});
 
 	return Promise.all(all);

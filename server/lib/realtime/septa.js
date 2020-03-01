@@ -1,4 +1,3 @@
-const promise = require('promise');
 const models = require('../models');
 const request = require('./request');
 
@@ -8,7 +7,7 @@ const REALTIME_BUS_URL = 'http://www3.septa.org/transitview/bus_route_data';
 const septa = {};
 
 function getTripsByBlockIds(agencyId, blockIds) {
-  return new promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const valuePlaceholders = blockIds.map(b => '?');
     models.trips
       .select(agencyId)
@@ -33,13 +32,13 @@ function translateBus(bus) {
 }
 
 function translateBuses(data) {
-  return new promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     resolve(data.bus.map(translateBus));
   });
 }
 
 function translateTrains(data, agencyId) {
-  return new promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const blockIds = data.map(train => train.trainno).filter(v => !!v);
 
     getTripsByBlockIds(agencyId, blockIds).then((trips) => {
@@ -67,7 +66,8 @@ function translateTrains(data, agencyId) {
 }
 
 function getRoute(agencyId, routeId, callback, error) {
-  models.routes.select(agencyId)
+  models.routes
+    .select(agencyId)
     .where('(lower(route_id) = ? OR lower(route_short_name) = ?)', [routeId, routeId])
     .error(error)
     .first((route) => {
@@ -80,7 +80,7 @@ function getRoute(agencyId, routeId, callback, error) {
 }
 
 septa.get_vehicles = (agencyId, routeTypeId, routeId) => {
-  return new promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     getRoute(agencyId, routeId, (route) => {
       if (!route.has_realtime) {
         return reject('Route does not support a realtime API.', 400);

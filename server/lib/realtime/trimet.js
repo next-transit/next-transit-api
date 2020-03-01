@@ -1,8 +1,9 @@
 const http = require('http');
 const querystring = require('querystring');
-const promise = require('promise');
+
 const config = require('../util/config');
 const route_types = require('../util/route_types');
+
 const request = require('./request');
 
 const trimet = {};
@@ -40,8 +41,8 @@ function normalize(routeTypeId, data) {
 }
 
 trimet.get_vehicles = function(agencyId, routeTypeId, routeId) {
-  return new promise(function(resolve, reject) {
-    request(get_request_url(routeId)).then(function(data) {
+  return new Promise((resolve, reject) => {
+    request(get_request_url(routeId)).then((data) => {
       resolve(normalize(routeTypeId, data));
     }, reject)
   });

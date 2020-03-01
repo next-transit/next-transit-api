@@ -1,16 +1,15 @@
 const http = require('http');
-const promise = require('promise');
 
 function request(url) {
-  return new promise(function(resolve, reject) {
+  return new Promise((resolve, reject) => {
     http.get(url, function(res) {
       res.setEncoding('utf8');
 
-      var data = '';
-      res.on('data', function(chunk) {
+      let data = '';
+      res.on('data', (chunk) => {
         data += chunk;
       }).on('end', function() {
-        var data_obj = null;
+        let data_obj = null;
         try {
           data_obj = JSON.parse(data);
         } catch(e) {
@@ -19,7 +18,7 @@ function request(url) {
         
         resolve(data_obj);
       });
-    }).on('error', function(err) {
+    }).on('error', (err) => {
       reject(err);
     });
   });

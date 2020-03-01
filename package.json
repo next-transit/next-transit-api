@@ -4,31 +4,22 @@
   "version": "1.0.1",
   "private": true,
   "engines": {
-    "node": "12.14.x",
-    "npm": "6.13.x"
+    "node": "13.9.0"
   },
   "dependencies": {
-    "compression": "^1.7.4",
-    "cors": "^2.7.1",
+    "compression": "1.7.4",
+    "cors": "2.8.5",
     "csv": "5.3.1",
     "curry": "1.2.0",
     "date-utils": "1.2.21",
-    "express": "4.x",
+    "express": "4.17.1",
     "extend": "3.0.2",
-    "hbs": "4.0.6",
+    "hbs": "4.1.0",
     "moment": "2.24.0",
-    "moment-timezone": "0.5.27",
+    "moment-timezone": "0.5.28",
     "next-transit-data": "git://github.com/next-transit/next-transit-data.git",
-    "pg": "7.15.1",
+    "pg": "7.18.2",
     "trim": "0.0.1"
   },
-  "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-contrib-sass": "~0.4.1",
-    "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-jshint": "~0.6.0",
-    "grunt-contrib-cssmin": "~0.6.1",
-    "grunt-contrib-uglify": "~0.2.2",
-    "grunt-contrib-watch": "~0.4.4"
-  }
+  "devDependencies": {}
 }
