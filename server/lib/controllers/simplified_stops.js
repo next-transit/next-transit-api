@@ -58,9 +58,7 @@ ctrl.action('item', function(req, res, success) {
 			}
 
 			query.first(function(results) {
-				success({
-					data: simplified_stops.public(results)
-				});
+				success({ data: results });
 			});
 		});
 });
