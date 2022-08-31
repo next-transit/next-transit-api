@@ -16,7 +16,7 @@
     "extend": "3.0.2",
     "hbs": "4.1.0",
     "moment": "2.24.0",
-    "moment-timezone": "0.5.28",
+    "moment-timezone": "0.5.35",
     "next-transit-data": "git://github.com/next-transit/next-transit-data.git",
     "pg": "7.18.2",
     "trim": "0.0.1"
